@@ -42,3 +42,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright
+.playwright-mcp/
+
+# claude
+.claude/
+
+# raw data / scraping artifacts
+wikipedia-raw.json
+wikipedia-events.json
+wikipedia-selected.json
+
+# screenshots
+/*.png
+*.heic
