@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "split-data": "node scripts/split-events.js",
     "start": "next start",
     "lint": "eslint"
   },

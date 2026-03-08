@@ -1,0 +1,59 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #050403;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c9a44e;
+  animation: dotPulse 3s ease-in-out infinite;
+}
+
+.label {
+  font-size: clamp(9px, 1.2vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(195, 155, 85, 0.6);
+}
+
+.dots {
+  display: flex;
+  gap: 8px;
+}
+
+.loadDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(195, 155, 85, 0.45);
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+
+.loadDot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loadDot:nth-child(3) {
+  animation-delay: 0.4s;
+}

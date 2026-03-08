@@ -1,0 +1,150 @@
+.slide {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+/* ── Side Era Label ── */
+
+.eraLabel {
+  position: absolute;
+  right: clamp(18px, 3.5vw, 40px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.eraText {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: clamp(8px, 1vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(195, 155, 85, 0.22);
+}
+
+/* ── Bottom Content ── */
+
+.bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: clamp(60px, 10vh, 120px) clamp(24px, 5vw, 80px) clamp(32px, 6vh, 64px);
+  background: linear-gradient(
+    to top,
+    rgba(5, 4, 3, 0.85) 0%,
+    rgba(5, 4, 3, 0.6) 40%,
+    rgba(5, 4, 3, 0.2) 80%,
+    transparent 100%
+  );
+}
+
+.bottom > * {
+  max-width: 720px;
+}
+
+/* ── Location ── */
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: clamp(8px, 1.2vh, 14px);
+}
+
+.location svg {
+  flex-shrink: 0;
+}
+
+.location span {
+  font-size: clamp(10px, 1.4vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: rgb(195, 165, 100);
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9), 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Year (hero display) ── */
+
+.year {
+  display: block;
+  font-size: clamp(72px, 16vw, 160px);
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 1) 10%,
+    rgba(220, 185, 110, 0.85) 90%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.7));
+}
+
+/* ── Accent Line ── */
+
+.accentLine {
+  width: clamp(40px, 6vw, 64px);
+  height: 2px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(195, 155, 85, 0.6), transparent);
+  transform-origin: left;
+  margin: clamp(10px, 1.5vh, 18px) 0 clamp(12px, 1.8vh, 20px);
+}
+
+/* ── Title ── */
+
+.title {
+  font-size: clamp(28px, 5.5vw, 48px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 clamp(4px, 0.6vh, 8px);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8), 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Subtitle ── */
+
+.subtitle {
+  font-size: clamp(14px, 2.2vw, 20px);
+  font-style: italic;
+  font-weight: 400;
+  color: rgb(220, 190, 110);
+  margin: 0 0 clamp(12px, 2vh, 20px);
+  line-height: 1.4;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9), 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Body Text ── */
+
+.body {
+  font-size: clamp(14px, 1.8vw, 17px);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+  max-width: 560px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Bottom Rule ── */
+
+.bottomRule {
+  margin-top: clamp(18px, 2.5vh, 28px);
+  max-width: 560px;
+}
+
+.ruleLine {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(195, 155, 85, 0.4) 0%,
+    rgba(195, 155, 85, 0.15) 50%,
+    transparent 100%
+  );
+}

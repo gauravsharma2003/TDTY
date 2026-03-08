@@ -1,0 +1,30 @@
+.shareBtn {
+  position: absolute;
+  bottom: clamp(28px, 5vh, 50px);
+  right: clamp(24px, 4vw, 48px);
+  z-index: 12;
+  background: none;
+  border: 1px solid rgba(195, 155, 85, 0.12);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease;
+}
+
+.shareBtn:hover {
+  border-color: rgba(195, 155, 85, 0.3);
+  background: rgba(195, 155, 85, 0.06);
+}
+
+.shareBtn:active {
+  transform: scale(0.95);
+}
+
+.shareBtn:disabled {
+  opacity: 0.4;
+  cursor: wait;
+}

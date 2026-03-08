@@ -1,0 +1,54 @@
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: clamp(24px, 4vh, 48px) clamp(24px, 5vw, 80px) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c9a44e;
+}
+
+.label {
+  font-size: clamp(9px, 1.2vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(195, 155, 85, 0.6);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.right {
+  text-align: right;
+}
+
+.monthShort {
+  display: block;
+  font-size: clamp(9px, 1vw, 12px);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.dayBig {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.08);
+  letter-spacing: -0.02em;
+}

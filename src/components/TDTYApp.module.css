@@ -1,0 +1,164 @@
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  background: #050403;
+  cursor: default;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  isolation: isolate;
+}
+
+.void {
+  position: absolute;
+  inset: 0;
+  background: #050403;
+  z-index: 0;
+}
+
+/* ── Image Layer ── */
+
+.imageLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.imgBlurFill {
+  position: absolute;
+  inset: -80px;
+  width: calc(100% + 160px);
+  height: calc(100% + 160px);
+  object-fit: cover;
+  filter: blur(40px) brightness(0.65) saturate(1.2);
+  z-index: 0;
+}
+
+.heroImg {
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  object-fit: cover;
+  object-position: center 20%;
+  z-index: 1;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .heroImg {
+    inset: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    object-position: center 15%;
+  }
+}
+
+.imageFallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(60, 45, 26, 0.8) 0%,
+    rgba(10, 7, 4, 1) 100%
+  );
+}
+
+/* ── Atmospheric Layers ── */
+
+.depthOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 4, 3, 0.5) 0%,
+    rgba(5, 4, 3, 0.15) 10%,
+    transparent 22%,
+    transparent 32%,
+    rgba(5, 4, 3, 0.35) 45%,
+    rgba(5, 4, 3, 0.8) 60%,
+    rgba(5, 4, 3, 0.97) 78%,
+    rgba(5, 4, 3, 1) 90%
+  );
+}
+
+.ambientGlow {
+  position: absolute;
+  inset: -50%;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 42% 50%,
+    rgba(195, 150, 70, 0.18) 0%,
+    transparent 50%
+  );
+  animation: breatheGlow 12s ease-in-out infinite;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  box-shadow: inset 0 0 200px 80px rgba(5, 4, 3, 0.6);
+}
+
+.museumFrame {
+  position: absolute;
+  inset: clamp(10px, 2vh, 20px);
+  z-index: 8;
+  border: 1px solid rgba(195, 155, 85, 0.06);
+  border-radius: 2px;
+  pointer-events: none;
+  transition: opacity 1.5s ease 2.8s;
+}
+
+/* ── Corner Marks ── */
+
+.cornerMarks {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  transition: opacity 0.5s ease 2.6s;
+}
+
+.corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+}
+
+.c0 {
+  top: clamp(16px, 3vh, 30px);
+  left: clamp(16px, 3vw, 30px);
+  border-top: 1px solid rgba(195, 155, 85, 0.12);
+  border-left: 1px solid rgba(195, 155, 85, 0.12);
+}
+
+.c1 {
+  top: clamp(16px, 3vh, 30px);
+  right: clamp(16px, 3vw, 30px);
+  border-top: 1px solid rgba(195, 155, 85, 0.12);
+  border-right: 1px solid rgba(195, 155, 85, 0.12);
+}
+
+.c2 {
+  bottom: clamp(20px, 3.5vh, 36px);
+  left: clamp(16px, 3vw, 30px);
+  border-bottom: 1px solid rgba(195, 155, 85, 0.12);
+  border-left: 1px solid rgba(195, 155, 85, 0.12);
+}
+
+.c3 {
+  bottom: clamp(20px, 3.5vh, 36px);
+  right: clamp(16px, 3vw, 30px);
+  border-bottom: 1px solid rgba(195, 155, 85, 0.12);
+  border-right: 1px solid rgba(195, 155, 85, 0.12);
+}
