@@ -3,33 +3,27 @@ const path = require("path");
 
 const RAW_FILE = path.join(__dirname, "..", "wikipedia-raw.json");
 const ENRICHED_FILE = path.join(__dirname, "..", "wikipedia-events.json");
-const DELAY_MS = 200;
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function fetchJSON(url, retries = 3) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      const res = await fetch(url, {
-        headers: { "User-Agent": "TDTY-App/1.0 (history-app)" },
-      });
-      if (res.ok) return await res.json();
-      if (res.status === 429) {
-        console.error("  Rate limited, waiting 3s...");
-        await delay(3000);
-        continue;
-      }
-      console.error(`  HTTP ${res.status} for ${url}`);
-      return null;
-    } catch (err) {
-      console.error(`  Fetch error (attempt ${i + 1}): ${err.message}`);
-      await delay(1000);
-    }
+async function fetchJSON(url, timeoutMs = 10000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "TDTY-App/1.0 (history-app)" },
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (res.ok) return await res.json();
+    return null;
+  } catch {
+    clearTimeout(timer);
+    return null;
   }
-  return null;
 }
 
-// All 366 days (using 2024, a leap year)
+// All 366 days (2024 is leap year)
 function getAllDays() {
   const days = [];
   for (let m = 1; m <= 12; m++) {
@@ -42,64 +36,43 @@ function getAllDays() {
 }
 
 const INTERESTING_KEYWORDS = [
-  // Tech & Innovation
   "apple", "microsoft", "google", "samsung", "iphone", "macintosh", "computer",
   "internet", "web", "software", "tesla", "spacex", "amazon", "facebook", "twitter",
   "ibm", "intel", "nokia", "android", "windows", "linux", "bitcoin", "telephone",
-  "telegraph", "radio", "television", "transistor", "microchip", "algorithm",
-  // Space
+  "telegraph", "radio", "television", "transistor",
   "nasa", "voyager", "apollo", "space", "mars", "moon", "satellite", "astronaut",
-  "cosmonaut", "orbit", "rocket", "shuttle", "hubble", "iss ", "pluto", "spacecraft",
-  "sputnik", "mercury", "gemini", "skylab", "mir ",
-  // Science & Medicine
+  "cosmonaut", "orbit", "rocket", "shuttle", "hubble", "pluto", "spacecraft",
+  "sputnik", "gemini", "skylab",
   "dna", "vaccine", "penicillin", "einstein", "nobel", "atom", "nuclear",
   "discovery", "discovered", "invention", "invented", "theory", "element",
-  "particle", "genome", "cloning", "x-ray", "relativity", "evolution",
-  "periodic table", "electricity", "quantum", "antibiotic",
-  // Geopolitics & History
+  "particle", "genome", "cloning", "x-ray", "relativity",
   "independence", "revolution", "constitution", "treaty", "peace",
   "united nations", "nato", "berlin wall", "cold war", "apartheid", "civil rights",
-  "suffrage", "vote", "democracy", "republic", "empire", "colony", "freedom",
+  "suffrage", "democracy", "republic", "empire", "freedom",
   "abolition", "slavery", "emancipation", "sovereign",
-  // Culture & Society
-  "olympic", "world cup", "oscar", "grammy", "emmy", "beatles", "elvis",
-  "disney", "hollywood", "broadway", "nobel prize", "pulitzer", "world fair",
-  "exposition", "museum",
-  // Firsts & Records
-  "first", "record", "largest", "longest", "fastest", "youngest", "oldest",
+  "olympic", "world cup", "oscar", "grammy", "beatles", "elvis",
+  "disney", "hollywood", "nobel prize", "pulitzer",
+  "first", "record", "largest", "longest", "fastest",
   "maiden voyage", "debut", "launched", "founded", "established", "opened",
-  "inaugural", "pioneered", "breakthrough",
-  // Major Events & Disasters
+  "inaugural", "breakthrough",
   "earthquake", "tsunami", "eruption", "titanic", "chernobyl", "pandemic",
-  "assassination", "coup", "massacre", "famine", "plague", "collapse",
-  // War milestones (not all wars, just famous ones)
+  "assassination", "coup", "massacre", "famine", "collapse",
   "world war", "d-day", "pearl harbor", "hiroshima", "nagasaki", "armistice",
-  "surrender", "liberation", "blitzkrieg", "dunkirk",
+  "surrender", "liberation", "dunkirk",
 ];
 
 function scoreEvent(event) {
   const text = (event.text || "").toLowerCase();
   let score = 0;
-
   for (const kw of INTERESTING_KEYWORDS) {
     if (text.includes(kw)) score += 1;
   }
-
-  // Boost events with more Wikipedia page links (indicates significance)
-  const pageCount = (event.pages || []).length;
-  score += Math.min(pageCount * 0.3, 3);
-
-  // Boost modern events people can relate to
+  score += Math.min((event.pages || []).length * 0.3, 3);
   const year = event.year || 0;
   if (year >= 1900 && year <= 2025) score += 1;
   if (year >= 1950 && year <= 2025) score += 1.5;
-
-  // Boost events with images
   if (event.pages?.[0]?.thumbnail) score += 0.5;
-
-  // Penalize very short descriptions (likely less notable)
   if (text.length < 50) score -= 1;
-
   return score;
 }
 
@@ -116,37 +89,42 @@ function getEra(year) {
 
 function deriveTitle(event) {
   const text = event.text || "";
-  // If text has a prefix like "Cold War:" or "Vietnam War:", use it
   const colonMatch = text.match(/^([A-Z][\w\s'''-]+):\s/);
-  if (colonMatch && colonMatch[1].length <= 40) {
-    return colonMatch[1];
-  }
-  // Use first linked page title, cleaned up
+  if (colonMatch && colonMatch[1].length <= 40) return colonMatch[1];
   const page = event.pages?.[0];
   if (page) {
-    let title = page.title.replace(/_/g, " ");
-    // Remove disambiguation suffixes like "(event)" or "(1969)"
-    title = title.replace(/\s*\(.*?\)\s*/g, "").trim();
-    // Shorten to ~6 words
+    let title = page.title.replace(/_/g, " ").replace(/\s*\(.*?\)\s*/g, "").trim();
     const words = title.split(" ");
     if (words.length > 6) return words.slice(0, 6).join(" ");
     return title;
   }
-  // Fallback: first 6 words of event text
   return text.split(" ").slice(0, 6).join(" ");
 }
 
 function extractFilename(url) {
   if (!url) return "";
-  const parts = url.split("/");
-  return decodeURIComponent(parts[parts.length - 1] || "");
+  return decodeURIComponent(url.split("/").pop() || "");
 }
 
-// ─── Phase 1: Fetch all 366 days ─────────────────────────────────
+// Run N promises with concurrency limit
+async function pMap(items, fn, concurrency = 5) {
+  const results = [];
+  let i = 0;
+  async function worker() {
+    while (i < items.length) {
+      const idx = i++;
+      results[idx] = await fn(items[idx], idx);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, worker));
+  return results;
+}
+
+// ─── Phase 1: Fetch all 366 days (5 concurrent) ─────────────────
 
 async function phase1() {
   if (fs.existsSync(RAW_FILE)) {
-    console.log("Phase 1: Using cached data from wikipedia-raw.json");
+    console.log("Phase 1: Using cached wikipedia-raw.json");
     return JSON.parse(fs.readFileSync(RAW_FILE, "utf-8"));
   }
 
@@ -154,12 +132,12 @@ async function phase1() {
   const results = {};
   let done = 0;
 
-  for (const { month, day } of days) {
+  await pMap(days, async ({ month, day }) => {
     const key = `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/${month}/${day}`;
     const data = await fetchJSON(url);
 
-    if (data && data.events) {
+    if (data?.events) {
       const scored = data.events.map((e) => ({ ...e, _score: scoreEvent(e) }));
       scored.sort((a, b) => b._score - a._score);
       results[key] = scored.slice(0, 5);
@@ -168,130 +146,102 @@ async function phase1() {
     }
 
     done++;
-    if (done % 30 === 0 || done === days.length) {
-      console.log(`Phase 1: ${done}/${days.length} days fetched`);
+    if (done % 50 === 0 || done === days.length) {
+      console.log(`Phase 1: ${done}/${days.length}`);
     }
-
-    await delay(DELAY_MS);
-  }
+  }, 5);
 
   fs.writeFileSync(RAW_FILE, JSON.stringify(results, null, 2));
-  console.log(`Phase 1 complete: saved ${Object.keys(results).length} days to wikipedia-raw.json`);
+  console.log(`Phase 1 done: ${Object.keys(results).length} days saved`);
   return results;
 }
 
-// ─── Phase 2: Enrich with article summaries ──────────────────────
+// ─── Phase 2: Enrich with article summaries (10 concurrent) ─────
 
 async function phase2(rawEvents) {
-  // Check for checkpoint — partial enrichment
-  let enriched = {};
-  let startFrom = null;
   if (fs.existsSync(ENRICHED_FILE)) {
-    enriched = JSON.parse(fs.readFileSync(ENRICHED_FILE, "utf-8"));
-    const enrichedKeys = Object.keys(enriched);
-    const allKeys = Object.keys(rawEvents);
-    if (enrichedKeys.length >= allKeys.length) {
-      console.log("Phase 2: Already complete, using cached data");
-      return enriched;
+    const existing = JSON.parse(fs.readFileSync(ENRICHED_FILE, "utf-8"));
+    if (Object.keys(existing).length >= 366) {
+      console.log("Phase 2: Using cached wikipedia-events.json");
+      return existing;
     }
-    startFrom = enrichedKeys[enrichedKeys.length - 1];
-    console.log(`Phase 2: Resuming from after ${startFrom} (${enrichedKeys.length} already done)`);
   }
 
-  const entries = Object.entries(rawEvents);
-  let skipping = startFrom !== null;
-  let done = Object.keys(enriched).length;
-
-  for (const [key, events] of entries) {
-    if (skipping) {
-      if (key === startFrom) skipping = false;
-      continue;
-    }
-
-    enriched[key] = [];
-
+  // Flatten all events with their day keys
+  const tasks = [];
+  for (const [key, events] of Object.entries(rawEvents)) {
     for (const event of events) {
-      const page = event.pages?.[0];
-      let summary = null;
-
-      if (page) {
-        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(page.title)}`;
-        summary = await fetchJSON(url);
-        await delay(150);
-      }
-
-      // Build narrative text
-      let text = event.text;
-      if (summary?.extract && summary.extract.length > text.length) {
-        // Use article extract if it's more substantial
-        text = summary.extract;
-      }
-      // Ensure reasonable length (trim to ~400 words)
-      const words = text.split(" ");
-      if (words.length > 80) {
-        text = words.slice(0, 80).join(" ");
-        // End at last complete sentence
-        const lastPeriod = text.lastIndexOf(".");
-        if (lastPeriod > text.length * 0.5) {
-          text = text.substring(0, lastPeriod + 1);
-        }
-      }
-
-      // Build subtitle from event text (first sentence)
-      let subtitle = event.text;
-      const firstDot = subtitle.indexOf(".");
-      if (firstDot > 0 && firstDot < 150) {
-        subtitle = subtitle.substring(0, firstDot + 1);
-      } else if (subtitle.length > 120) {
-        subtitle = subtitle.substring(0, 120) + "...";
-      }
-
-      // Try to get a better image (larger)
-      let imageUrl = "";
-      if (page?.thumbnail?.source) {
-        // Replace thumbnail size with larger version
-        imageUrl = page.thumbnail.source.replace(/\/\d+px-/, "/800px-");
-      } else if (summary?.thumbnail?.source) {
-        imageUrl = summary.thumbnail.source.replace(/\/\d+px-/, "/800px-");
-      }
-
-      // Try to derive location from summary description
-      let location = "";
-      if (summary?.description) {
-        location = summary.description;
-      }
-
-      const historyEvent = {
-        year: event.year,
-        title: deriveTitle(event),
-        subtitle: subtitle,
-        text: text,
-        location: location,
-        era: getEra(event.year),
-        image_url: imageUrl,
-        image_filename: extractFilename(imageUrl),
-        image_credit: extractFilename(imageUrl)
-          ? extractFilename(imageUrl) + " - Wikimedia Commons"
-          : "",
-      };
-
-      enriched[key].push(historyEvent);
+      tasks.push({ key, event });
     }
+  }
+
+  console.log(`Phase 2: Enriching ${tasks.length} events...`);
+  let done = 0;
+  const enrichedMap = {};
+
+  await pMap(tasks, async ({ key, event }) => {
+    const page = event.pages?.[0];
+    let summary = null;
+
+    if (page) {
+      const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(page.title)}`;
+      summary = await fetchJSON(url, 8000);
+    }
+
+    // Build narrative text
+    let text = event.text;
+    if (summary?.extract && summary.extract.length > text.length) {
+      text = summary.extract;
+    }
+    const words = text.split(" ");
+    if (words.length > 80) {
+      text = words.slice(0, 80).join(" ");
+      const lastPeriod = text.lastIndexOf(".");
+      if (lastPeriod > text.length * 0.5) text = text.substring(0, lastPeriod + 1);
+    }
+
+    // Subtitle from event text
+    let subtitle = event.text;
+    const firstDot = subtitle.indexOf(".");
+    if (firstDot > 0 && firstDot < 150) subtitle = subtitle.substring(0, firstDot + 1);
+    else if (subtitle.length > 120) subtitle = subtitle.substring(0, 120) + "...";
+
+    // Image (larger version)
+    let imageUrl = "";
+    if (page?.thumbnail?.source) {
+      imageUrl = page.thumbnail.source.replace(/\/\d+px-/, "/800px-");
+    } else if (summary?.thumbnail?.source) {
+      imageUrl = summary.thumbnail.source.replace(/\/\d+px-/, "/800px-");
+    }
+
+    // Location from summary
+    let location = summary?.description || "";
+
+    const historyEvent = {
+      year: event.year,
+      title: deriveTitle(event),
+      subtitle,
+      text,
+      location,
+      era: getEra(event.year),
+      image_url: imageUrl,
+      image_filename: extractFilename(imageUrl),
+      image_credit: extractFilename(imageUrl) ? extractFilename(imageUrl) + " - Wikimedia Commons" : "",
+    };
+
+    if (!enrichedMap[key]) enrichedMap[key] = [];
+    enrichedMap[key].push(historyEvent);
 
     done++;
-    if (done % 30 === 0) {
-      // Save checkpoint
-      fs.writeFileSync(ENRICHED_FILE, JSON.stringify(enriched, null, 2));
-      console.log(`Phase 2: ${done}/${entries.length} days enriched (checkpoint saved)`);
-    }
-  }
+    if (done % 100 === 0) console.log(`Phase 2: ${done}/${tasks.length}`);
+  }, 10);
 
-  fs.writeFileSync(ENRICHED_FILE, JSON.stringify(enriched, null, 2));
-  console.log(`Phase 2 complete: ${Object.keys(enriched).length} days enriched`);
-  return enriched;
+  fs.writeFileSync(ENRICHED_FILE, JSON.stringify(enrichedMap, null, 2));
+  console.log(`Phase 2 done: ${Object.keys(enrichedMap).length} days enriched`);
+  return enrichedMap;
 }
 
-// ─── Phase 3: Merge with existing events.json ───────────────────
+// ─── Phase 3: Merge ─────────────────────────────────────────────
 
 function phase3(enrichedEvents) {
   const EVENTS_FILE = path.join(__dirname, "..", "events.json");
@@ -299,58 +249,33 @@ function phase3(enrichedEvents) {
 
   let added = 0;
   for (const [key, newEvents] of Object.entries(enrichedEvents)) {
-    if (!existing[key]) {
-      existing[key] = [];
-    }
-
-    // Deduplicate by checking year + rough title match
+    if (!existing[key]) existing[key] = [];
     const existingYears = new Set(existing[key].map((e) => e.year));
 
-    for (const newEvent of newEvents) {
-      // Skip if we already have an event from the same year
-      if (existingYears.has(newEvent.year)) continue;
-
-      // Skip if event has no image
-      if (!newEvent.image_url) continue;
-
-      existing[key].push(newEvent);
-      existingYears.add(newEvent.year);
+    for (const ne of newEvents) {
+      if (existingYears.has(ne.year)) continue;
+      if (!ne.image_url) continue;
+      existing[key].push(ne);
+      existingYears.add(ne.year);
       added++;
     }
-  }
 
-  // Sort each day's events by year
-  for (const key of Object.keys(existing)) {
     existing[key].sort((a, b) => a.year - b.year);
   }
 
   fs.writeFileSync(EVENTS_FILE, JSON.stringify(existing, null, 2));
-  console.log(`Phase 3 complete: Added ${added} new events to events.json`);
-
-  // Stats
-  const totalEvents = Object.values(existing).reduce((s, arr) => s + arr.length, 0);
-  const avgPerDay = (totalEvents / Object.keys(existing).length).toFixed(1);
-  console.log(`Total events: ${totalEvents} across ${Object.keys(existing).length} days (avg ${avgPerDay}/day)`);
+  const total = Object.values(existing).reduce((s, a) => s + a.length, 0);
+  console.log(`Phase 3 done: +${added} events → ${total} total (${(total / Object.keys(existing).length).toFixed(1)} avg/day)`);
 }
 
-// ─── Main ────────────────────────────────────────────────────────
+// ─── Main ───────────────────────────────────────────────────────
 
 async function main() {
-  console.log("=== TDTY Wikipedia Event Enrichment Pipeline ===\n");
-
-  console.log("Phase 1: Fetching events for all 366 days...");
+  console.log("=== TDTY Wikipedia Event Enrichment ===\n");
   const raw = await phase1();
-  console.log();
-
-  console.log("Phase 2: Enriching with article summaries & images...");
   const enriched = await phase2(raw);
-  console.log();
-
-  console.log("Phase 3: Merging into events.json...");
   phase3(enriched);
-  console.log();
-
-  console.log("=== Done! Run 'npm run split-data' to update public/data/ ===");
+  console.log("\nDone! Run: npm run split-data");
 }
 
 main().catch(console.error);

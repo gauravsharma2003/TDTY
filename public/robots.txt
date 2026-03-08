@@ -1,2 +1,6 @@
 User-agent: *
-Disallow: /
+Allow: /
+Allow: /on-this-day/
+Disallow: /data/
+
+Sitemap: https://tdty.vercel.app/sitemap.xml

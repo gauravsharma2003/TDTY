@@ -13,9 +13,10 @@ interface Props {
   event: HistoryEvent;
   monthShort: string;
   day: number;
+  todaySlug?: string;
 }
 
-export default function TDTYApp({ event, monthShort, day }: Props) {
+export default function TDTYApp({ event, monthShort, day, todaySlug }: Props) {
   const [revealed, setRevealed] = useState(false);
   const [imgError, setImgError] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -111,7 +112,7 @@ export default function TDTYApp({ event, monthShort, day }: Props) {
 
       {/* L10: Event content */}
       <main>
-        <EventSlide event={event} active={r} />
+        <EventSlide event={event} active={r} todaySlug={todaySlug} />
       </main>
 
       {/* L11: Corner marks */}

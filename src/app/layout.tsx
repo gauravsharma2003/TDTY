@@ -9,9 +9,24 @@ const literata = Literata({
 });
 
 export const metadata: Metadata = {
-  title: "This Day That Year",
+  title: {
+    default: "This Day That Year — Today in History",
+    template: "%s",
+  },
   description:
-    "Discover what happened on this day throughout history.",
+    "Discover what happened on this day throughout history. A new historical event every day with immersive visuals.",
+  applicationName: "This Day That Year",
+  metadataBase: new URL("https://tdty.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

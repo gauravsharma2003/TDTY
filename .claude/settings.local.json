@@ -30,7 +30,9 @@
       "Bash(git:*)",
       "Bash(wc:*)",
       "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 node:*)",
-      "Bash(do curl:*)"
+      "Bash(do curl:*)",
+      "Bash(kill 29076:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

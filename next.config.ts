@@ -12,7 +12,18 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
-          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      },
+      {
+        source: "/on-this-day/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, s-maxage=604800" },
+        ],
+      },
+      {
+        source: "/data/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
         ],
       },
     ];

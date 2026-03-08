@@ -1,0 +1,268 @@
+.page {
+  min-height: 100vh;
+  background: #050403;
+  color: #fff;
+  padding: 0 clamp(16px, 5vw, 80px);
+}
+
+/* ── Header ── */
+
+.header {
+  text-align: center;
+  padding: clamp(48px, 8vh, 96px) 0 clamp(32px, 5vh, 64px);
+}
+
+.homeLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(195, 155, 85, 0.6);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.homeLink:hover {
+  color: rgba(195, 155, 85, 1);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c9a44e;
+}
+
+.dateHeading {
+  font-size: clamp(48px, 10vw, 96px);
+  font-weight: 800;
+  line-height: 1;
+  margin-top: clamp(16px, 3vh, 32px);
+  background: linear-gradient(155deg, #fff 10%, rgba(220, 185, 110, 0.85) 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dateSubtext {
+  font-size: clamp(14px, 2vw, 20px);
+  color: rgba(195, 155, 85, 0.5);
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* ── Events ── */
+
+.events {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 6vh, 80px);
+}
+
+/* ── Event Card ── */
+
+.card {
+  border-top: 1px solid rgba(195, 155, 85, 0.1);
+  padding-top: clamp(32px, 4vh, 48px);
+}
+
+.cardImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: clamp(20px, 3vh, 32px);
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.cardImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgba(5, 4, 3, 0.7) 100%
+  );
+}
+
+.cardBody {
+  padding: 0 clamp(0px, 1vw, 8px);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.cardLocation {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: rgb(195, 165, 100);
+  text-transform: uppercase;
+}
+
+.cardEra {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: rgba(195, 155, 85, 0.35);
+  text-transform: uppercase;
+}
+
+.cardYear {
+  display: block;
+  font-size: clamp(56px, 12vw, 100px);
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(155deg, #fff 10%, rgba(220, 185, 110, 0.85) 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+
+.cardAccent {
+  width: clamp(40px, 6vw, 64px);
+  height: 2px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(195, 155, 85, 0.6), transparent);
+  margin: clamp(8px, 1vh, 14px) 0 clamp(12px, 1.5vh, 18px);
+}
+
+.cardTitle {
+  font-size: clamp(24px, 4.5vw, 36px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.cardSubtitle {
+  font-size: clamp(14px, 2vw, 18px);
+  font-style: italic;
+  color: rgb(220, 190, 110);
+  margin-bottom: clamp(12px, 2vh, 20px);
+  line-height: 1.4;
+}
+
+.cardText {
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 640px;
+}
+
+.cardYearLabel {
+  margin-top: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: rgba(195, 155, 85, 0.25);
+  text-transform: uppercase;
+}
+
+/* ── Skeleton ── */
+
+.skeleton {
+  padding: clamp(32px, 4vh, 48px) 0;
+  border-top: 1px solid rgba(195, 155, 85, 0.06);
+}
+
+.skeletonImage {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  margin-bottom: 24px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeletonText {
+  height: 16px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  margin-bottom: 12px;
+  width: 80%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 64px 0;
+}
+
+/* ── Navigation ── */
+
+.nav {
+  max-width: 800px;
+  margin: clamp(48px, 6vh, 80px) auto clamp(24px, 3vh, 40px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid rgba(195, 155, 85, 0.1);
+  padding-top: clamp(24px, 3vh, 40px);
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(12px, 1.4vw, 14px);
+  font-weight: 600;
+  color: rgba(195, 155, 85, 0.6);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: rgba(195, 155, 85, 1);
+}
+
+.navHome {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navHome:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Footer ── */
+
+.footer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: clamp(16px, 2vh, 24px) 0 clamp(32px, 5vh, 64px);
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.15);
+  font-style: italic;
+}

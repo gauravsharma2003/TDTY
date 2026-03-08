@@ -1,8 +1,38 @@
-.shareBtn {
+.shareWrap {
   position: absolute;
   bottom: clamp(28px, 5vh, 50px);
   right: clamp(24px, 4vw, 48px);
   z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tooltip {
+  white-space: nowrap;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: rgba(195, 155, 85, 0.85);
+  background: rgba(5, 4, 3, 0.85);
+  border: 1px solid rgba(195, 155, 85, 0.15);
+  border-radius: 6px;
+  padding: 6px 14px;
+  animation: tooltipIn 0.25s ease-out;
+  pointer-events: none;
+}
+
+@keyframes tooltipIn {
+  from {
+    opacity: 0;
+    transform: translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.shareBtn {
   background: none;
   border: 1px solid rgba(195, 155, 85, 0.12);
   border-radius: 50%;
@@ -13,6 +43,7 @@
   justify-content: center;
   cursor: pointer;
   transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease;
+  flex-shrink: 0;
 }
 
 .shareBtn:hover {

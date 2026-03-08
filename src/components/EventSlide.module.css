@@ -148,3 +148,18 @@
     transparent 100%
   );
 }
+
+.dayLink {
+  display: inline-block;
+  margin-top: clamp(10px, 1.5vh, 16px);
+  font-size: clamp(11px, 1.2vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(195, 155, 85, 0.35);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.dayLink:hover {
+  color: rgba(195, 155, 85, 0.7);
+}

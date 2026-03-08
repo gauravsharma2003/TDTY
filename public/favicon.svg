@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0806"/>
+      <stop offset="100%" stop-color="#050403"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#e8d5a0"/>
+      <stop offset="40%" stop-color="#c9a44e"/>
+      <stop offset="100%" stop-color="#9a7832"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#c9a44e"/>
+      <stop offset="100%" stop-color="#c9a44e" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="url(#bg)"/>
+
+  <!-- Subtle border -->
+  <rect x="16" y="16" width="480" height="480" rx="52" fill="none" stroke="rgba(195,155,85,0.08)" stroke-width="1.5"/>
+
+  <!-- Corner marks -->
+  <g stroke="rgba(195,155,85,0.18)" stroke-width="2.5" stroke-linecap="round" fill="none">
+    <path d="M44 44 L74 44 M44 44 L44 74"/>
+    <path d="M468 44 L438 44 M468 44 L468 74"/>
+    <path d="M44 468 L74 468 M44 468 L44 438"/>
+    <path d="M468 468 L438 468 M468 468 L468 438"/>
+  </g>
+
+  <!-- Serif T letterform — hand drawn -->
+  <g fill="url(#gold)">
+    <!-- Top crossbar with serif brackets -->
+    <path d="
+      M148 140
+      L148 128
+      Q148 120 156 120
+      L356 120
+      Q364 120 364 128
+      L364 140
+      Q364 148 356 148
+      L356 176
+      Q356 180 352 180
+      L340 180
+      Q336 180 336 176
+      L336 156
+      Q336 148 328 148
+      L284 148
+      Q278 148 278 154
+      L278 362
+      Q278 368 284 368
+      L310 368
+      Q318 368 318 376
+      L318 388
+      Q318 396 310 396
+      L202 396
+      Q194 396 194 388
+      L194 376
+      Q194 368 202 368
+      L228 368
+      Q234 368 234 362
+      L234 154
+      Q234 148 228 148
+      L184 148
+      Q176 148 176 156
+      L176 176
+      Q176 180 172 180
+      L160 180
+      Q156 180 156 176
+      L156 148
+      Q148 148 148 140
+      Z
+    "/>
+  </g>
+
+  <!-- Gold dot accent -->
+  <circle cx="256" cy="434" r="10" fill="#c9a44e"/>
+
+  <!-- Subtle accent line under T -->
+  <rect x="210" y="412" width="92" height="2.5" rx="1.25" fill="url(#accent)"/>
+</svg>

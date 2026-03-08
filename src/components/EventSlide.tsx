@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { HistoryEvent } from "@/lib/types";
 import { formatYear, yearDisplay } from "@/lib/format-year";
 import styles from "./EventSlide.module.css";
@@ -6,9 +7,10 @@ import styles from "./EventSlide.module.css";
 interface Props {
   event: HistoryEvent;
   active: boolean;
+  todaySlug?: string;
 }
 
-export default function EventSlide({ event, active }: Props) {
+export default function EventSlide({ event, active, todaySlug }: Props) {
   const a = active;
 
   const tY = (delay: number, y = 20, blur = 2) => ({
@@ -120,6 +122,14 @@ export default function EventSlide({ event, active }: Props) {
           }}
         >
           <div className={styles.ruleLine} />
+          {todaySlug && (
+            <Link
+              href={`/on-this-day/${todaySlug}`}
+              className={styles.dayLink}
+            >
+              See all events for today →
+            </Link>
+          )}
         </div>
       </div>
     </div>
