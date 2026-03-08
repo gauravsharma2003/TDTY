@@ -32,7 +32,10 @@
       "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 node:*)",
       "Bash(do curl:*)",
       "Bash(kill 29076:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 curl:*)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 bash:*)"
     ]
   }
 }

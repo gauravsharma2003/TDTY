@@ -5,6 +5,32 @@
   padding: 0 clamp(16px, 5vw, 80px);
 }
 
+/* ── Breadcrumb ── */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: clamp(16px, 2vh, 24px);
+}
+
+.breadcrumb a {
+  color: rgba(195, 155, 85, 0.45);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+  color: rgba(195, 155, 85, 1);
+}
+
+.breadcrumb span[aria-current] {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 /* ── Header ── */
 
 .header {

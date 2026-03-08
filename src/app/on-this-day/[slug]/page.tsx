@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import { HistoryEvent } from "@/lib/types";
 import { formatYear } from "@/lib/format-year";
 import { getAllSlugs, slugToDateKey, getAdjacentSlugs, slugToDisplayDate } from "@/lib/date-slugs";
-import { encodeEvents } from "@/lib/obfuscate";
 import DayPageContent from "@/components/DayPageContent";
 
 export async function generateStaticParams() {
@@ -32,23 +31,27 @@ export async function generateMetadata({
   const events = getEventsForSlug(slug);
   if (!events.length) return {};
   const displayDate = slugToDisplayDate(slug);
-  const title = `On ${displayDate} in History | This Day That Year`;
+  const title = `What Happened on ${displayDate}? | This Day That Year`;
   const desc = events
     .slice(0, 3)
     .map((e) => `${e.title} (${formatYear(e.year)})`)
-    .join(", ");
-  const description = `Discover what happened on ${displayDate}: ${desc}`;
+    .join(". ");
+  const description = `On ${displayDate} in history: ${desc}. Explore major historical events with immersive visuals.`;
   const siteUrl = "https://tdty.vercel.app";
 
   return {
     title,
     description,
     keywords: [
+      `what happened on ${displayDate}`,
       `${displayDate} in history`,
+      `${displayDate} historical events`,
       "on this day",
       "today in history",
       ...events.slice(0, 3).map((e) => e.title),
+      ...events.slice(0, 3).map((e) => e.location),
       "historical events",
+      "this day that year",
     ],
     alternates: { canonical: `/on-this-day/${slug}` },
     openGraph: {
@@ -56,7 +59,7 @@ export async function generateMetadata({
       description,
       url: `${siteUrl}/on-this-day/${slug}`,
       siteName: "This Day That Year",
-      images: [{ url: events[0].image_url, alt: events[0].title }],
+      images: [{ url: events[0].image_url, alt: events[0].title, width: 1200, height: 630 }],
       type: "article",
       locale: "en_US",
     },
@@ -74,6 +77,7 @@ export async function generateMetadata({
         follow: true,
         "max-image-preview": "large",
         "max-snippet": -1,
+        "max-video-preview": -1,
       },
     },
   };
@@ -94,26 +98,55 @@ export default async function DayPage({
   const top3 = events.slice(0, 3);
   const displayDate = slugToDisplayDate(slug);
   const { prev, next } = getAdjacentSlugs(slug);
-  const encoded = encodeEvents(top3);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: `Historical events on ${displayDate}`,
-    numberOfItems: top3.length,
-    itemListElement: top3.map((e, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      item: {
-        "@type": "Article",
-        headline: e.title,
-        description: e.subtitle,
-        image: e.image_url,
-        datePublished: formatYear(e.year),
-        author: { "@type": "Organization", name: "This Day That Year" },
-      },
-    })),
-  };
+  const siteUrl = "https://tdty.vercel.app";
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: `Historical events on ${displayDate}`,
+      description: `Major events that happened on ${displayDate} throughout history`,
+      numberOfItems: top3.length,
+      itemListElement: top3.map((e, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "Article",
+          headline: e.title,
+          description: `${e.subtitle}. ${e.text}`,
+          image: e.image_url,
+          datePublished: formatYear(e.year),
+          author: { "@type": "Organization", name: "This Day That Year", url: siteUrl },
+          publisher: { "@type": "Organization", name: "This Day That Year", url: siteUrl },
+        },
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteUrl,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "On This Day",
+          item: `${siteUrl}/on-this-day`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: displayDate,
+          item: `${siteUrl}/on-this-day/${slug}`,
+        },
+      ],
+    },
+  ];
 
   return (
     <>
@@ -121,19 +154,8 @@ export default async function DayPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <noscript>
-        <div style={{ padding: "2rem", color: "#fff", background: "#050403" }}>
-          <h1>On {displayDate} in History</h1>
-          {top3.map((e, i) => (
-            <section key={i}>
-              <h2>{e.title} — {formatYear(e.year)}</h2>
-              <p>{e.subtitle}</p>
-            </section>
-          ))}
-        </div>
-      </noscript>
       <DayPageContent
-        _d={encoded}
+        events={top3}
         slug={slug}
         displayDate={displayDate}
         prevSlug={prev}

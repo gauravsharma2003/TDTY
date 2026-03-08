@@ -1,13 +1,12 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { HistoryEvent } from "@/lib/types";
-import { decodeEvents } from "@/lib/obfuscate";
 import { formatYear, yearDisplay } from "@/lib/format-year";
 import styles from "./DayPageContent.module.css";
 
 interface Props {
-  _d: string;
+  events: HistoryEvent[];
   slug: string;
   displayDate: string;
   prevSlug: string;
@@ -53,9 +52,11 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
       <div className={styles.cardImage}>
         <img
           src={event.image_url}
-          alt={event.title}
+          alt={`${event.title} — ${event.subtitle}`}
           loading={index === 0 ? "eager" : "lazy"}
           decoding="async"
+          width={800}
+          height={450}
         />
         <div className={styles.cardImageOverlay} />
       </div>
@@ -80,20 +81,17 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
   );
 }
 
-export default function DayPageContent({ _d, displayDate, prevSlug, nextSlug }: Props) {
-  const [events, setEvents] = useState<HistoryEvent[] | null>(null);
-
-  useEffect(() => {
-    try {
-      setEvents(decodeEvents(_d) as HistoryEvent[]);
-    } catch {
-      setEvents([]);
-    }
-  }, [_d]);
-
+export default function DayPageContent({ events, displayDate, prevSlug, nextSlug }: Props) {
   return (
-    <div className={styles.page}>
+    <main className={styles.page}>
       <header className={styles.header}>
+        <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
+          <Link href="/">Home</Link>
+          <span aria-hidden="true">/</span>
+          <Link href="/on-this-day">On This Day</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{displayDate}</span>
+        </nav>
         <Link href="/" className={styles.homeLink}>
           <span className={styles.dot} />
           This Day That Year
@@ -102,29 +100,19 @@ export default function DayPageContent({ _d, displayDate, prevSlug, nextSlug }: 
         <p className={styles.dateSubtext}>in History</p>
       </header>
 
-      <div className={styles.events}>
-        {!events ? (
-          <>
-            {[0, 1, 2].map((i) => (
-              <div key={i} className={styles.skeleton}>
-                <div className={styles.skeletonImage} />
-                <div className={styles.skeletonText} />
-                <div className={styles.skeletonText} style={{ width: "60%" }} />
-              </div>
-            ))}
-          </>
-        ) : events.length === 0 ? (
+      <section className={styles.events} aria-label={`Historical events on ${displayDate}`}>
+        {events.length === 0 ? (
           <p className={styles.empty}>No events found for this day.</p>
         ) : (
           events.map((event, i) => (
             <EventCard key={i} event={event} index={i} />
           ))
         )}
-      </div>
+      </section>
 
-      <nav className={styles.nav}>
+      <nav className={styles.nav} aria-label="Day navigation">
         <Link href={`/on-this-day/${prevSlug}`} className={styles.navLink}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           {slugToDisplay(prevSlug)}
@@ -134,7 +122,7 @@ export default function DayPageContent({ _d, displayDate, prevSlug, nextSlug }: 
         </Link>
         <Link href={`/on-this-day/${nextSlug}`} className={styles.navLink}>
           {slugToDisplay(nextSlug)}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </Link>
@@ -143,6 +131,6 @@ export default function DayPageContent({ _d, displayDate, prevSlug, nextSlug }: 
       <footer className={styles.footer}>
         <p>Explore history, one day at a time.</p>
       </footer>
-    </div>
+    </main>
   );
 }

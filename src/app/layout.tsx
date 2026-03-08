@@ -36,6 +36,21 @@ export const viewport: Viewport = {
   themeColor: "#050403",
 };
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "This Day That Year",
+  alternateName: "TDTY",
+  url: "https://tdty.vercel.app",
+  description:
+    "Discover what happened on this day throughout history. A new historical event every day with immersive visuals.",
+  publisher: {
+    "@type": "Organization",
+    name: "This Day That Year",
+    url: "https://tdty.vercel.app",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -46,6 +61,10 @@ export default function RootLayout({
       <head>
         <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
         <link rel="preconnect" href="https://upload.wikimedia.org" crossOrigin="anonymous" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
       </head>
       <body>{children}</body>
     </html>

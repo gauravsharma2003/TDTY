@@ -34,8 +34,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const { event, dateString } = getTodayEvent();
   if (!event) return {};
 
-  const title = `${event.title} — This Day That Year`;
-  const description = `On ${dateString}, ${formatYear(event.year)}: ${event.subtitle}. ${event.text.slice(0, 150)}...`;
+  const title = `Today in History: ${event.title} — This Day That Year`;
+  const description = `On ${dateString}, ${formatYear(event.year)}: ${event.subtitle}. ${event.text.slice(0, 140)}`;
   const siteName = "This Day That Year";
   const siteUrl = "https://tdty.vercel.app";
 
@@ -43,15 +43,19 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     keywords: [
+      "today in history",
       "this day in history",
       "on this day",
-      "today in history",
+      "what happened today",
+      "today in history facts",
       event.title,
       event.location,
       event.era,
       `${dateString} history`,
-      "historical events",
+      `what happened on ${dateString}`,
+      "historical events today",
       "history today",
+      "this day that year",
     ],
     authors: [{ name: siteName }],
     creator: siteName,
@@ -69,10 +73,11 @@ export async function generateMetadata(): Promise<Metadata> {
         {
           url: event.image_url,
           alt: event.title,
+          width: 1200,
+          height: 630,
         },
       ],
-      type: "article",
-      publishedTime: new Date().toISOString(),
+      type: "website",
       locale: "en_US",
     },
     twitter: {
@@ -100,42 +105,67 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-function JsonLd({ event, dateString }: { event: HistoryEvent; dateString: string }) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: event.title,
-    description: event.subtitle,
-    articleBody: event.text,
-    image: event.image_url,
-    datePublished: new Date().toISOString(),
-    dateModified: new Date().toISOString(),
-    author: {
-      "@type": "Organization",
-      name: "This Day That Year",
-      url: "https://tdty.vercel.app",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "This Day That Year",
-      url: "https://tdty.vercel.app",
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": "https://tdty.vercel.app",
-    },
-    about: {
-      "@type": "Event",
-      name: event.title,
-      description: event.subtitle,
-      location: {
-        "@type": "Place",
-        name: event.location,
+function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateString: string; todaySlug: string }) {
+  const siteUrl = "https://tdty.vercel.app";
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: `Today in History: ${event.title}`,
+      description: `${event.subtitle}. ${event.text.slice(0, 200)}`,
+      articleBody: event.text,
+      image: event.image_url,
+      author: {
+        "@type": "Organization",
+        name: "This Day That Year",
+        url: siteUrl,
       },
-      startDate: formatYear(event.year),
+      publisher: {
+        "@type": "Organization",
+        name: "This Day That Year",
+        url: siteUrl,
+      },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": siteUrl,
+      },
+      about: {
+        "@type": "Event",
+        name: event.title,
+        description: event.subtitle,
+        location: {
+          "@type": "Place",
+          name: event.location,
+        },
+        startDate: formatYear(event.year),
+      },
+      keywords: `today in history, this day in history, ${dateString}, ${event.title}, ${event.location}`,
     },
-    keywords: `this day in history, ${dateString}, ${event.title}, ${event.location}`,
-  };
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: siteUrl,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "On This Day",
+          item: `${siteUrl}/on-this-day`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: dateString,
+          item: `${siteUrl}/on-this-day/${todaySlug}`,
+        },
+      ],
+    },
+  ];
 
   return (
     <script
@@ -150,7 +180,22 @@ export default function Home() {
   if (!event) return null;
   return (
     <>
-      <JsonLd event={event} dateString={dateString} />
+      <JsonLd event={event} dateString={dateString} todaySlug={todaySlug} />
+      <h1
+        style={{
+          position: "absolute",
+          width: "1px",
+          height: "1px",
+          padding: 0,
+          margin: "-1px",
+          overflow: "hidden",
+          clip: "rect(0,0,0,0)",
+          whiteSpace: "nowrap",
+          border: 0,
+        }}
+      >
+        Today in History: {event.title} — {dateString}, {formatYear(event.year)}
+      </h1>
       <TDTYApp event={event} monthShort={monthShort} day={day} todaySlug={todaySlug} />
     </>
   );

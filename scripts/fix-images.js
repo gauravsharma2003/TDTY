@@ -4,6 +4,16 @@ const path = require("path");
 const EVENTS_FILE = path.join(__dirname, "..", "events.json");
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Valid Wikimedia thumbnail widths (based on their step policy)
+// 800px is NOT valid. 330, 400, 1280 are valid.
+const PREFERRED_WIDTH = 1280;
+const FALLBACK_WIDTH = 330;
+
+function extractFilename(url) {
+  if (!url) return "";
+  return decodeURIComponent(url.split("/").pop() || "");
+}
+
 async function checkUrl(url, timeoutMs = 10000) {
   if (!url) return 0;
   const controller = new AbortController();
@@ -12,7 +22,7 @@ async function checkUrl(url, timeoutMs = 10000) {
     const res = await fetch(url, {
       method: "HEAD",
       signal: controller.signal,
-      headers: { "User-Agent": "TDTY-App/1.0 (image-check)" },
+      headers: { "User-Agent": "TDTY-App/1.0" },
       redirect: "follow",
     });
     clearTimeout(timer);
@@ -28,7 +38,7 @@ async function fetchJSON(url, timeoutMs = 10000) {
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": "TDTY-App/1.0 (image-fix)" },
+      headers: { "User-Agent": "TDTY-App/1.0" },
       signal: controller.signal,
     });
     clearTimeout(timer);
@@ -40,211 +50,107 @@ async function fetchJSON(url, timeoutMs = 10000) {
   }
 }
 
-function extractFilename(url) {
-  if (!url) return "";
-  return decodeURIComponent(url.split("/").pop() || "");
-}
+function fixThumbnailUrl(url) {
+  if (!url) return url;
 
-// Try alternate sizes for a Wikimedia thumbnail URL
-function getAlternateUrls(url) {
-  if (!url) return [];
-  const alts = [];
+  // Direct commons URLs (not thumbnails) — leave as-is, always work
+  if (!url.includes("/thumb/")) return url;
 
-  // If it's an 800px URL, try 640px, 480px, 330px
-  if (url.includes("/800px-")) {
-    alts.push(url.replace("/800px-", "/640px-"));
-    alts.push(url.replace("/800px-", "/480px-"));
-    alts.push(url.replace("/800px-", "/330px-"));
+  // Replace any invalid width with 1280px
+  // Match: /NNNpx-filename at the end of thumbnail URLs
+  const match = url.match(/\/(\d+)px-([^/]+)$/);
+  if (!match) return url;
+
+  const currentWidth = parseInt(match[1]);
+  const filename = match[2];
+
+  // If already a valid width, keep it
+  if ([120, 150, 200, 220, 250, 300, 320, 330, 400, 440, 500, 1200, 1280].includes(currentWidth)) {
+    return url;
   }
 
-  // If it's a 1280px URL, try 800px, 640px
-  if (url.includes("/1280px-")) {
-    alts.push(url.replace("/1280px-", "/800px-"));
-    alts.push(url.replace("/1280px-", "/640px-"));
-    alts.push(url.replace("/1280px-", "/330px-"));
-  }
-
-  // Try the full-size image (remove /thumb/ and the size part)
-  const thumbMatch = url.match(/\/thumb\/(.+?)\/\d+px-/);
-  if (thumbMatch) {
-    const fullUrl = url.replace("/thumb/", "/").replace(/\/\d+px-[^/]+$/, "");
-    alts.push(fullUrl);
-  }
-
-  return alts;
-}
-
-// Fetch a fresh image from Wikipedia page summary
-async function fetchFreshImage(title) {
-  if (!title) return null;
-  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-  const summary = await fetchJSON(url);
-  if (summary?.thumbnail?.source) {
-    return summary.thumbnail.source;
-  }
-  if (summary?.originalimage?.source) {
-    return summary.originalimage.source;
-  }
-  return null;
-}
-
-// Search Wikimedia Commons for an image related to the event
-async function searchWikimediaImage(query) {
-  const url = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srnamespace=6&srlimit=3&format=json`;
-  const data = await fetchJSON(url);
-  if (!data?.query?.search?.length) return null;
-
-  for (const result of data.query.search) {
-    const title = result.title; // e.g., "File:Something.jpg"
-    const infoUrl = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=imageinfo&iiprop=url|mime&format=json`;
-    const infoData = await fetchJSON(infoUrl);
-    if (!infoData?.query?.pages) continue;
-
-    for (const page of Object.values(infoData.query.pages)) {
-      const info = page.imageinfo?.[0];
-      if (info?.url && info.mime?.startsWith("image/")) {
-        return info.url;
-      }
-    }
-  }
-  return null;
+  // Replace with 1280px (or 330px if preferred)
+  return url.replace(/\/\d+px-([^/]+)$/, `/${PREFERRED_WIDTH}px-${filename}`);
 }
 
 async function main() {
   const events = JSON.parse(fs.readFileSync(EVENTS_FILE, "utf-8"));
 
-  // Flatten all events
-  const allEvents = [];
+  // Phase 1: Fix all thumbnail URLs to use valid widths
+  let fixed = 0;
+  let alreadyOk = 0;
+  let noUrl = 0;
+  let directUrl = 0;
+
   for (const [key, dayEvents] of Object.entries(events)) {
     for (let i = 0; i < dayEvents.length; i++) {
-      allEvents.push({ key, index: i, event: dayEvents[i] });
-    }
-  }
+      const ev = dayEvents[i];
+      if (!ev.image_url) { noUrl++; continue; }
 
-  console.log(`Checking ${allEvents.length} images...\n`);
+      if (!ev.image_url.includes("/thumb/")) {
+        directUrl++;
+        continue;
+      }
 
-  // Check all images with rate limiting (3 concurrent, 100ms delay)
-  const broken = [];
-  let checked = 0;
-  let good = 0;
-  let bad = 0;
-  let empty = 0;
-
-  // Process in batches of 3
-  for (let batch = 0; batch < allEvents.length; batch += 3) {
-    const batchItems = allEvents.slice(batch, batch + 3);
-    const results = await Promise.all(
-      batchItems.map(async (item) => {
-        if (!item.event.image_url) {
-          return { ...item, status: 0, empty: true };
-        }
-        const status = await checkUrl(item.event.image_url);
-        return { ...item, status };
-      })
-    );
-
-    for (const r of results) {
-      checked++;
-      if (r.empty) {
-        empty++;
-        broken.push(r);
-      } else if (r.status === 200) {
-        good++;
+      const newUrl = fixThumbnailUrl(ev.image_url);
+      if (newUrl !== ev.image_url) {
+        events[key][i].image_url = newUrl;
+        events[key][i].image_filename = extractFilename(newUrl);
+        events[key][i].image_credit = extractFilename(newUrl) + " - Wikimedia Commons";
+        fixed++;
       } else {
-        bad++;
-        broken.push(r);
+        alreadyOk++;
       }
-    }
-
-    if (checked % 150 === 0 || checked === allEvents.length) {
-      console.log(`Checked: ${checked}/${allEvents.length} | OK: ${good} | Broken: ${bad} | Empty: ${empty}`);
-    }
-
-    await delay(100);
-  }
-
-  console.log(`\nTotal broken/empty: ${broken.length}`);
-
-  if (broken.length === 0) {
-    console.log("All images are valid!");
-    return;
-  }
-
-  // Fix broken images
-  console.log(`\nFixing ${broken.length} broken images...\n`);
-  let fixed = 0;
-  let unfixable = 0;
-
-  for (let i = 0; i < broken.length; i++) {
-    const { key, index, event, status } = broken[i];
-    let newUrl = null;
-
-    // Step 1: Try alternate sizes
-    if (event.image_url) {
-      const alts = getAlternateUrls(event.image_url);
-      for (const alt of alts) {
-        const altStatus = await checkUrl(alt);
-        if (altStatus === 200) {
-          newUrl = alt;
-          break;
-        }
-        await delay(100);
-      }
-    }
-
-    // Step 2: Fetch fresh image from Wikipedia page summary
-    if (!newUrl && event.title) {
-      await delay(150);
-      const freshUrl = await fetchFreshImage(event.title);
-      if (freshUrl) {
-        const freshStatus = await checkUrl(freshUrl);
-        if (freshStatus === 200) {
-          newUrl = freshUrl;
-        }
-      }
-    }
-
-    // Step 3: Search Wikimedia Commons
-    if (!newUrl) {
-      await delay(150);
-      const searchQuery = event.title + " " + event.year;
-      const searchUrl = await searchWikimediaImage(searchQuery);
-      if (searchUrl) {
-        const searchStatus = await checkUrl(searchUrl);
-        if (searchStatus === 200) {
-          newUrl = searchUrl;
-        }
-      }
-    }
-
-    if (newUrl) {
-      events[key][index].image_url = newUrl;
-      events[key][index].image_filename = extractFilename(newUrl);
-      events[key][index].image_credit = extractFilename(newUrl) + " - Wikimedia Commons";
-      fixed++;
-    } else {
-      unfixable++;
-    }
-
-    if ((i + 1) % 20 === 0 || i === broken.length - 1) {
-      console.log(`Fix progress: ${i + 1}/${broken.length} | Fixed: ${fixed} | Unfixable: ${unfixable}`);
     }
   }
 
-  // Remove events with no working image
-  if (unfixable > 0) {
-    let removed = 0;
-    for (const key of Object.keys(events)) {
-      const before = events[key].length;
-      events[key] = events[key].filter((e) => e.image_url);
-      removed += before - events[key].length;
+  console.log("Phase 1 — URL format fix:");
+  console.log(`  Fixed: ${fixed}`);
+  console.log(`  Already valid: ${alreadyOk}`);
+  console.log(`  Direct URLs: ${directUrl}`);
+  console.log(`  No URL: ${noUrl}`);
+
+  // Phase 2: Verify a sample of fixed URLs
+  console.log("\nPhase 2 — Verifying sample of fixed URLs...");
+  const thumbEvents = [];
+  for (const [key, dayEvents] of Object.entries(events)) {
+    for (const ev of dayEvents) {
+      if (ev.image_url && ev.image_url.includes("/thumb/")) {
+        thumbEvents.push(ev);
+      }
     }
-    if (removed > 0) console.log(`Removed ${removed} events with no image`);
   }
 
+  // Test 15 evenly spaced samples
+  const step = Math.floor(thumbEvents.length / 15);
+  let ok = 0, fail = 0;
+  for (let i = 0; i < thumbEvents.length; i += step) {
+    const ev = thumbEvents[i];
+    const status = await checkUrl(ev.image_url);
+    const label = status === 200 ? "OK" : String(status);
+    console.log(`  ${label} | ${ev.title} | ...${ev.image_url.slice(-50)}`);
+    if (status === 200) ok++;
+    else fail++;
+    await delay(600);
+    if (ok + fail >= 15) break;
+  }
+  console.log(`  Results: ${ok} OK, ${fail} failed out of 15 samples`);
+
+  // Phase 3: For 1280px URLs that fail, try falling back to 330px
+  if (fail > 0) {
+    console.log("\nPhase 3 — Checking if 1280px fails need 330px fallback...");
+    // Test a failing URL at 330px
+    const failingEvent = thumbEvents.find((ev) => ev.image_url.includes("/1280px-"));
+    if (failingEvent) {
+      const url330 = failingEvent.image_url.replace("/1280px-", "/330px-");
+      const status330 = await checkUrl(url330);
+      console.log(`  330px test: ${status330} | ${url330.slice(-50)}`);
+    }
+  }
+
+  // Save
   fs.writeFileSync(EVENTS_FILE, JSON.stringify(events, null, 2));
-  const total = Object.values(events).reduce((s, a) => s + a.length, 0);
-  console.log(`\nSaved! ${total} events total. Fixed: ${fixed}, Unfixable: ${unfixable}`);
+  console.log("\nSaved events.json");
   console.log("Run: npm run split-data");
 }
 
