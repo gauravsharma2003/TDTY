@@ -1,11 +1,13 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { HistoryEvent } from "@/lib/types";
 import Header from "./Header";
 import EventSlide from "./EventSlide";
-import DustParticles from "./effects/DustParticles";
-import ShareButton from "./ShareButton";
 import styles from "./TDTYApp.module.css";
+
+const DustParticles = dynamic(() => import("./effects/DustParticles"), { ssr: false });
+const ShareButton = dynamic(() => import("./ShareButton"), { ssr: false });
 
 interface Props {
   event: HistoryEvent;
@@ -15,9 +17,9 @@ interface Props {
 
 export default function TDTYApp({ event, monthShort, day }: Props) {
   const [revealed, setRevealed] = useState(false);
-  const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
   const [imgError, setImgError] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setRevealed(true), 500);
@@ -26,26 +28,27 @@ export default function TDTYApp({ event, monthShort, day }: Props) {
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     const r = wrapRef.current?.getBoundingClientRect();
-    if (!r) return;
-    setMouse({
-      x: (e.clientX - r.left) / r.width,
-      y: (e.clientY - r.top) / r.height,
-    });
+    if (!r || !heroRef.current) return;
+    const mx = (e.clientX - r.left) / r.width;
+    const my = (e.clientY - r.top) / r.height;
+    const px = (mx - 0.5) * 2;
+    const py = (my - 0.5) * 2;
+    heroRef.current.style.transform = `translate(${px * -14}px, ${py * -10}px)`;
   }, []);
 
   useEffect(() => {
     const handler = (e: DeviceOrientationEvent) => {
-      setMouse({
-        x: Math.max(0, Math.min(1, 0.5 + (e.gamma || 0) / 50)),
-        y: Math.max(0, Math.min(1, 0.5 + ((e.beta || 0) - 40) / 50)),
-      });
+      if (!heroRef.current) return;
+      const mx = Math.max(0, Math.min(1, 0.5 + (e.gamma || 0) / 50));
+      const my = Math.max(0, Math.min(1, 0.5 + ((e.beta || 0) - 40) / 50));
+      const px = (mx - 0.5) * 2;
+      const py = (my - 0.5) * 2;
+      heroRef.current.style.transform = `translate(${px * -14}px, ${py * -10}px)`;
     };
-    window.addEventListener("deviceorientation", handler, true);
+    window.addEventListener("deviceorientation", handler, { passive: true, capture: true });
     return () => window.removeEventListener("deviceorientation", handler, true);
   }, []);
 
-  const px = (mouse.x - 0.5) * 2;
-  const py = (mouse.y - 0.5) * 2;
   const r = revealed;
 
   return (
@@ -54,9 +57,6 @@ export default function TDTYApp({ event, monthShort, day }: Props) {
       className={styles.wrapper}
       onMouseMove={onMouseMove}
     >
-      {/* L0: Void */}
-      <div className={styles.void} />
-
       {/* L1: Background image */}
       <div className={styles.imageLayer}>
         {imgError ? (
@@ -71,13 +71,12 @@ export default function TDTYApp({ event, monthShort, day }: Props) {
               decoding="async"
             />
             <img
+              ref={heroRef}
               src={event.image_url}
               alt={event.title}
               className={styles.heroImg}
-              style={{
-                transform: `translate(${px * -14}px, ${py * -10}px)`,
-              }}
               loading="eager"
+              fetchPriority="high"
               decoding="async"
               onError={() => setImgError(true)}
             />
@@ -111,7 +110,9 @@ export default function TDTYApp({ event, monthShort, day }: Props) {
       />
 
       {/* L10: Event content */}
-      <EventSlide event={event} active={r} />
+      <main>
+        <EventSlide event={event} active={r} />
+      </main>
 
       {/* L11: Corner marks */}
       <div

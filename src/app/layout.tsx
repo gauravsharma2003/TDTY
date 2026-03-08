@@ -4,6 +4,7 @@ import "./globals.css";
 
 const literata = Literata({
   subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
   display: "swap",
 });
 
@@ -27,6 +28,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={literata.className}>
+      <head>
+        <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
+        <link rel="preconnect" href="https://upload.wikimedia.org" crossOrigin="anonymous" />
+      </head>
       <body>{children}</body>
     </html>
   );

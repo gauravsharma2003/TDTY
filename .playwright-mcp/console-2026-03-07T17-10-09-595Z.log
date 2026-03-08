@@ -1,0 +1,76 @@
+[   88798ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[   89801ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[   90807ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[   91810ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[   92813ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[   97818ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[  102822ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[  107825ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[  112829ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[  117833ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[  122837ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[  127846ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=gfr6dCig-JVT0VkMN1SzX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[  955380ms] [ERROR] ./src/components/TDTYApp.tsx:6:1
+Module not found: Can't resolve './EventSlide'
+  4 | import { useToday } from "@/hooks/useToday";
+  5 | import Header from "./Header";
+> 6 | import EventSlide from "./EventSlide";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import LoadingScreen from "./LoadingScreen";
+  8 | import DustParticles from "./effects/DustParticles";
+  9 | import styles from "./TDTYApp.module.css";
+
+Import trace:
+  Server Component:
+    ./src/components/TDTYApp.tsx
+    ./src/app/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[  969210ms] [ERROR] ./src/components/TDTYApp.tsx:6:1
+Module not found: Can't resolve './EventSlide'
+  4 | import { useToday } from "@/hooks/useToday";
+  5 | import Header from "./Header";
+> 6 | import EventSlide from "./EventSlide";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import LoadingScreen from "./LoadingScreen";
+  8 | import DustParticles from "./effects/DustParticles";
+  9 | import styles from "./TDTYApp.module.css";
+
+Import trace:
+  Server Component:
+    ./src/components/TDTYApp.tsx
+    ./src/app/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[  984325ms] [ERROR] ./src/components/EventSlide.tsx:4:1
+Module not found: Can't resolve './EventSlide.module.css'
+  2 | import { HistoryEvent } from "@/lib/types";
+  3 | import { formatYear, yearDisplay } from "@/lib/format-year";
+> 4 | import styles from "./EventSlide.module.css";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 |
+  6 | interface Props {
+  7 |   event: HistoryEvent;
+
+Import traces:
+  Client Component Browser:
+    ./src/components/EventSlide.tsx [Client Component Browser]
+    ./src/components/TDTYApp.tsx [Client Component Browser]
+    ./src/components/TDTYApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/EventSlide.tsx [Client Component SSR]
+    ./src/components/TDTYApp.tsx [Client Component SSR]
+    ./src/components/TDTYApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[  996339ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297

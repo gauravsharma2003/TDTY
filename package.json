@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/split-events.js",
     "build": "next build",
     "split-data": "node scripts/split-events.js",
     "start": "next start",

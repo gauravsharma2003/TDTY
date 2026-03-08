@@ -1,0 +1,49 @@
+[   77325ms] [ERROR] WebSocket connection to 'ws://localhost:3002/_next/webpack-hmr?id=Qfle4otuo9-1KF35F-WhT' failed:  @ http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10878
+[   77327ms] [ERROR] Failed to fetch RSC payload for http://localhost:3002/. Falling back to browser navigation. TypeError: Failed to fetch
+    at createFetch (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:2588:24)
+    at fetchServerResponse (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:2490:27)
+    at fetchMissingDynamicData (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:3654:75)
+    at spawnDynamicRequests (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:3501:35)
+    at navigateToSeededRoute (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:7741:50)
+    at refreshDynamicData (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:8347:58)
+    at hmrRefreshReducer (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:8513:51)
+    at clientReducer (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9081:65)
+    at Object.action (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9310:55)
+    at runAction (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9215:38)
+    at dispatchAction (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9278:9)
+    at Object.dispatch (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9308:40)
+    at http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:1489:29
+    at startTransition (http://localhost:3002/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:5500:31)
+    at dispatch (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:1488:13)
+    at dispatchAppRouterAction (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:1470:5)
+    at http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9439:61
+    at startTransition (http://localhost:3002/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js:1279:31)
+    at Object.hmrRefresh (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9438:40)
+    at http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:11620:64
+    at startTransition (http://localhost:3002/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js:1279:31)
+    at processMessage (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:11619:44)
+    at WebSocket.handleMessage (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10914:52) @ http://localhost:3002/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   77330ms] [ERROR] Failed to fetch RSC payload for http://localhost:3002/. Falling back to browser navigation. TypeError: Failed to fetch
+    at createFetch (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:2588:24)
+    at fetchServerResponse (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:2490:27)
+    at fetchMissingDynamicData (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:3654:75)
+    at spawnDynamicRequests (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:3501:35)
+    at navigateToSeededRoute (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:7741:50)
+    at refreshDynamicData (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:8347:58)
+    at hmrRefreshReducer (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:8513:51)
+    at clientReducer (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9081:65)
+    at Object.action (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9310:55)
+    at runAction (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9215:38)
+    at dispatchAction (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9278:9)
+    at Object.dispatch (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9308:40)
+    at http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:1489:29
+    at startTransition (http://localhost:3002/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:5500:31)
+    at dispatch (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:1488:13)
+    at dispatchAppRouterAction (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:1470:5)
+    at http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9439:61
+    at startTransition (http://localhost:3002/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js:1279:31)
+    at Object.hmrRefresh (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:9438:40)
+    at http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:11620:64
+    at startTransition (http://localhost:3002/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js:1279:31)
+    at processMessage (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:11619:44)
+    at WebSocket.handleMessage (http://localhost:3002/_next/static/chunks/node_modules_next_dist_client_17643121._.js:10914:52) @ http://localhost:3002/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127

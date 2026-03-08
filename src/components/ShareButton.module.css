@@ -24,6 +24,11 @@
   transform: scale(0.95);
 }
 
+.shareBtn:focus-visible {
+  outline: 2px solid rgba(195, 155, 85, 0.6);
+  outline-offset: 2px;
+}
+
 .shareBtn:disabled {
   opacity: 0.4;
   cursor: wait;

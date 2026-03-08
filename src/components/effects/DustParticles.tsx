@@ -10,6 +10,8 @@ export default function DustParticles() {
     const ctx = c.getContext("2d");
     if (!ctx) return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     let w: number, h: number;
     const resize = () => {
       w = c.width = c.parentElement?.clientWidth || window.innerWidth;
@@ -18,7 +20,8 @@ export default function DustParticles() {
     resize();
     window.addEventListener("resize", resize);
 
-    const pts = Array.from({ length: 50 }, () => ({
+    const count = window.innerWidth < 768 ? 25 : 50;
+    const pts = Array.from({ length: count }, () => ({
       x: Math.random() * (w || 400),
       y: Math.random() * (h || 800),
       r: Math.random() * 1.3 + 0.3,
@@ -29,9 +32,18 @@ export default function DustParticles() {
     }));
 
     let animId: number;
-    const draw = () => {
+    let paused = false;
+    let lastFrame = 0;
+    const FRAME_INTERVAL = 41.67; // ~24fps
+
+    const draw = (now: number) => {
+      animId = requestAnimationFrame(draw);
+      if (paused) return;
+      if (now - lastFrame < FRAME_INTERVAL) return;
+      lastFrame = now;
+
       ctx.clearRect(0, 0, w, h);
-      const t = Date.now() * 0.001;
+      const t = now * 0.001;
       for (const p of pts) {
         p.x += p.dx + Math.sin(t * 0.6 + p.ph) * 0.1;
         p.y += p.dy;
@@ -46,13 +58,18 @@ export default function DustParticles() {
         ctx.fillStyle = `rgba(235,205,155,${p.o * (0.6 + 0.4 * Math.sin(t * 1.2 + p.ph))})`;
         ctx.fill();
       }
-      animId = requestAnimationFrame(draw);
     };
-    draw();
+    animId = requestAnimationFrame(draw);
+
+    const onVisibility = () => {
+      paused = document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
