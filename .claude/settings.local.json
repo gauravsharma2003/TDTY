@@ -35,7 +35,9 @@
       "Bash(npm run:*)",
       "Bash(npx tsc:*)",
       "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 curl:*)",
-      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 bash:*)"
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 bash:*)",
+      "mcp__playwright__browser_close",
+      "Bash(grep:*)"
     ]
   }
 }

@@ -137,12 +137,15 @@ export default function OnThisDayIndex() {
             style={{
               fontSize: "clamp(36px, 8vw, 72px)",
               fontWeight: 800,
-              lineHeight: 1.1,
+              lineHeight: 1.3,
               marginTop: "clamp(16px, 3vh, 32px)",
+              paddingBottom: "0.15em",
               background: "linear-gradient(155deg, #fff 10%, rgba(220, 185, 110, 0.85) 90%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
+              WebkitBoxDecorationBreak: "clone" as const,
+              boxDecorationBreak: "clone" as const,
             }}
           >
             On This Day in History
