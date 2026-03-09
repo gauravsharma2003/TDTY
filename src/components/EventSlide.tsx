@@ -13,13 +13,12 @@ interface Props {
 export default function EventSlide({ event, active, todaySlug }: Props) {
   const a = active;
 
-  const tY = (delay: number, y = 20, blur = 2) => ({
+  const tY = (delay: number, y = 20) => ({
     opacity: a ? 1 : 0,
     transform: a ? "translateY(0)" : `translateY(${y}px)`,
-    filter: a ? "blur(0px)" : `blur(${blur}px)`,
     transition: a
-      ? `all 1s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`
-      : "all 0.4s ease 0s",
+      ? `opacity 1s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 1s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`
+      : "opacity 0.4s ease 0s, transform 0.4s ease 0s",
   });
 
   const tX = (delay: number, x = -14) => ({
@@ -76,11 +75,10 @@ export default function EventSlide({ event, active, todaySlug }: Props) {
             style={{
               opacity: a ? 1 : 0,
               transform: a ? "translateY(0)" : "translateY(55px)",
-              letterSpacing: a ? "-0.045em" : "0.12em",
-              filter: a ? "blur(0)" : "blur(6px)",
+              letterSpacing: "-0.045em",
               transition: a
-                ? "all 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.6s"
-                : "all 0.4s ease 0s",
+                ? "opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s, transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s"
+                : "opacity 0.4s ease 0s, transform 0.4s ease 0s",
             }}
           >
             {yearDisplay(event.year)}
@@ -99,7 +97,7 @@ export default function EventSlide({ event, active, todaySlug }: Props) {
         />
 
         {/* Title */}
-        <h1 className={styles.title} style={tY(1.1, 30, 4)}>
+        <h1 className={styles.title} style={tY(1.1, 30)}>
           {event.title}
         </h1>
 
