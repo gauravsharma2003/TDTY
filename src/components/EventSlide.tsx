@@ -107,7 +107,7 @@ export default function EventSlide({ event, active, todaySlug }: Props) {
         </p>
 
         {/* Body */}
-        <p className={styles.body} style={tY(1.5, 24, 2)}>
+        <p className={styles.body} style={tY(1.5, 24)}>
           {event.text}
         </p>
 
