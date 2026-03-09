@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  verification: {
+    other: {
+      "msvalidate.01": "A1DF133464BFDC6FA8D3D52345D6A876",
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "32x32" },
