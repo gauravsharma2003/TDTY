@@ -4,4 +4,4 @@ Allow: /on-this-day
 Allow: /on-this-day/
 Disallow: /data/
 
-Sitemap: https://tdty.vercel.app/sitemap.xml
+Sitemap: https://thisyearthatday.vercel.app/sitemap.xml

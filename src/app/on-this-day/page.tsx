@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     title: "On This Day in History — Every Day of the Year",
     description:
       "Browse 366 days of history. Discover major events that happened on every day of the year.",
-    url: "https://tdty.vercel.app/on-this-day",
+    url: "https://thisyearthatday.vercel.app/on-this-day",
     siteName: "This Day That Year",
     type: "website",
     locale: "en_US",
@@ -73,7 +73,7 @@ export default function OnThisDayIndex() {
     "@type": "CollectionPage",
     name: "On This Day in History",
     description: "Browse historical events for every day of the year",
-    url: "https://tdty.vercel.app/on-this-day",
+    url: "https://thisyearthatday.vercel.app/on-this-day",
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: 366,
@@ -81,14 +81,14 @@ export default function OnThisDayIndex() {
         "@type": "ListItem",
         position: i + 1,
         name: m,
-        url: `https://tdty.vercel.app/on-this-day#${m.toLowerCase()}`,
+        url: `https://thisyearthatday.vercel.app/on-this-day#${m.toLowerCase()}`,
       })),
     },
     breadcrumb: {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://tdty.vercel.app" },
-        { "@type": "ListItem", position: 2, name: "On This Day", item: "https://tdty.vercel.app/on-this-day" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://thisyearthatday.vercel.app" },
+        { "@type": "ListItem", position: 2, name: "On This Day", item: "https://thisyearthatday.vercel.app/on-this-day" },
       ],
     },
   };

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description:
     "Discover what happened on this day throughout history. A new historical event every day with immersive visuals.",
   applicationName: "This Day That Year",
-  metadataBase: new URL("https://tdty.vercel.app"),
+  metadataBase: new URL("https://thisyearthatday.vercel.app"),
   alternates: {
     canonical: "/",
   },
@@ -41,13 +41,13 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "This Day That Year",
   alternateName: "TDTY",
-  url: "https://tdty.vercel.app",
+  url: "https://thisyearthatday.vercel.app",
   description:
     "Discover what happened on this day throughout history. A new historical event every day with immersive visuals.",
   publisher: {
     "@type": "Organization",
     name: "This Day That Year",
-    url: "https://tdty.vercel.app",
+    url: "https://thisyearthatday.vercel.app",
   },
 };
 

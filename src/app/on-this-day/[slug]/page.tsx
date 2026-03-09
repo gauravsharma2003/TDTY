@@ -37,7 +37,7 @@ export async function generateMetadata({
     .map((e) => `${e.title} (${formatYear(e.year)})`)
     .join(". ");
   const description = `On ${displayDate} in history: ${desc}. Explore major historical events with immersive visuals.`;
-  const siteUrl = "https://tdty.vercel.app";
+  const siteUrl = "https://thisyearthatday.vercel.app";
 
   return {
     title,
@@ -99,7 +99,7 @@ export default async function DayPage({
   const displayDate = slugToDisplayDate(slug);
   const { prev, next } = getAdjacentSlugs(slug);
 
-  const siteUrl = "https://tdty.vercel.app";
+  const siteUrl = "https://thisyearthatday.vercel.app";
 
   const jsonLd = [
     {

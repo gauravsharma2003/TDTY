@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = `Today in History: ${event.title} — This Day That Year`;
   const description = `On ${dateString}, ${formatYear(event.year)}: ${event.subtitle}. ${event.text.slice(0, 140)}`;
   const siteName = "This Day That Year";
-  const siteUrl = "https://tdty.vercel.app";
+  const siteUrl = "https://thisyearthatday.vercel.app";
 
   return {
     title,
@@ -106,7 +106,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateString: string; todaySlug: string }) {
-  const siteUrl = "https://tdty.vercel.app";
+  const siteUrl = "https://thisyearthatday.vercel.app";
   const jsonLd = [
     {
       "@context": "https://schema.org",

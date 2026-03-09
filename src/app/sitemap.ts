@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllSlugs } from "@/lib/date-slugs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://tdty.vercel.app";
+  const base = "https://thisyearthatday.vercel.app";
 
   const dayPages = getAllSlugs().map((slug) => ({
     url: `${base}/on-this-day/${slug}`,
