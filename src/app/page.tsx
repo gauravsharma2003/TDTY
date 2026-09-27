@@ -1,24 +1,20 @@
-import fs from "fs";
-import path from "path";
 import type { Metadata } from "next";
 import TDTYApp from "@/components/TDTYApp";
-import { HistoryEvent } from "@/lib/types";
+import type { HistoryEvent } from "@/lib/types";
 import { formatYear } from "@/lib/format-year";
 import { dateKeyToSlug } from "@/lib/date-slugs";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { getEventsForDate } from "@/lib/events-data";
 
 export const revalidate = 3600;
 
-function getTodayEvent() {
+async function getTodayEvent() {
   const now = new Date();
   const mm = String(now.getMonth() + 1).padStart(2, "0");
   const dd = String(now.getDate()).padStart(2, "0");
   const dateKey = `${mm}-${dd}`;
 
-  const filePath = path.join(process.cwd(), "public", "data", `${dateKey}.json`);
-  const dayEvents: HistoryEvent[] = fs.existsSync(filePath)
-    ? JSON.parse(fs.readFileSync(filePath, "utf-8"))
-    : JSON.parse(fs.readFileSync(path.join(process.cwd(), "events.json"), "utf-8"))[dateKey] || [];
+  const dayEvents = await getEventsForDate(dateKey);
 
   const eventIndex = now.getFullYear() % (dayEvents.length || 1);
   const event = dayEvents[eventIndex] ?? dayEvents[0];
@@ -32,7 +28,7 @@ function getTodayEvent() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { event, dateString } = getTodayEvent();
+  const { event, dateString } = await getTodayEvent();
   if (!event) return {};
 
   const title = `Today in History: ${event.title} — This Day That Year`;
@@ -176,8 +172,8 @@ function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateStr
   );
 }
 
-export default function Home() {
-  const { event, monthShort, day, dateString, todaySlug } = getTodayEvent();
+export default async function Home() {
+  const { event, monthShort, day, dateString, todaySlug } = await getTodayEvent();
   if (!event) return null;
   return (
     <>
