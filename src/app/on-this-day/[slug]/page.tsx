@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { HistoryEvent } from "@/lib/types";
 import { formatYear } from "@/lib/format-year";
 import { getAllSlugs, slugToDateKey, getAdjacentSlugs, slugToDisplayDate } from "@/lib/date-slugs";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import DayPageContent from "@/components/DayPageContent";
 
 export async function generateStaticParams() {
@@ -37,7 +38,7 @@ export async function generateMetadata({
     .map((e) => `${e.title} (${formatYear(e.year)})`)
     .join(". ");
   const description = `On ${displayDate} in history: ${desc}. Explore major historical events with immersive visuals.`;
-  const siteUrl = "https://thisyearthatday.vercel.app";
+  const siteUrl = SITE_URL;
 
   return {
     title,
@@ -99,7 +100,7 @@ export default async function DayPage({
   const displayDate = slugToDisplayDate(slug);
   const { prev, next } = getAdjacentSlugs(slug);
 
-  const siteUrl = "https://thisyearthatday.vercel.app";
+  const siteUrl = SITE_URL;
 
   const jsonLd = [
     {
@@ -117,8 +118,8 @@ export default async function DayPage({
           description: `${e.subtitle}. ${e.text}`,
           image: e.image_url,
           datePublished: formatYear(e.year),
-          author: { "@type": "Organization", name: "This Day That Year", url: siteUrl },
-          publisher: { "@type": "Organization", name: "This Day That Year", url: siteUrl },
+          author: { "@type": "Organization", name: SITE_NAME, url: siteUrl },
+          publisher: { "@type": "Organization", name: SITE_NAME, url: siteUrl },
         },
       })),
     },

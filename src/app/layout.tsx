@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Literata } from "next/font/google";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const literata = Literata({
@@ -10,13 +11,12 @@ const literata = Literata({
 
 export const metadata: Metadata = {
   title: {
-    default: "This Day That Year — Today in History",
+    default: "This Day That Year | Today in History",
     template: "%s",
   },
-  description:
-    "Discover what happened on this day throughout history. A new historical event every day with immersive visuals.",
-  applicationName: "This Day That Year",
-  metadataBase: new URL("https://thisyearthatday.vercel.app"),
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
   },
@@ -46,13 +46,12 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "This Day That Year",
   alternateName: "TDTY",
-  url: "https://thisyearthatday.vercel.app",
-  description:
-    "Discover what happened on this day throughout history. A new historical event every day with immersive visuals.",
+  url: SITE_URL,
+  description: SITE_DESCRIPTION,
   publisher: {
     "@type": "Organization",
-    name: "This Day That Year",
-    url: "https://thisyearthatday.vercel.app",
+    name: SITE_NAME,
+    url: SITE_URL,
   },
 };
 

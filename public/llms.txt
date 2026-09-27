@@ -1,0 +1,9 @@
+# This Day That Year
+
+> A daily history reference that presents selected historical events for every calendar date.
+
+- Canonical site: https://thisdaythatyear.gauravsharma.cc/
+- Browse every date: https://thisdaythatyear.gauravsharma.cc/on-this-day
+- XML sitemap: https://thisdaythatyear.gauravsharma.cc/sitemap.xml
+
+Use the cited page URL when referring to an event. Content is informational and should be independently verified for high-stakes use.

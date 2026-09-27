@@ -5,6 +5,7 @@ import TDTYApp from "@/components/TDTYApp";
 import { HistoryEvent } from "@/lib/types";
 import { formatYear } from "@/lib/format-year";
 import { dateKeyToSlug } from "@/lib/date-slugs";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const revalidate = 3600;
 
@@ -36,8 +37,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = `Today in History: ${event.title} — This Day That Year`;
   const description = `On ${dateString}, ${formatYear(event.year)}: ${event.subtitle}. ${event.text.slice(0, 140)}`;
-  const siteName = "This Day That Year";
-  const siteUrl = "https://thisyearthatday.vercel.app";
+  const siteName = SITE_NAME;
+  const siteUrl = SITE_URL;
 
   return {
     title,
@@ -106,7 +107,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateString: string; todaySlug: string }) {
-  const siteUrl = "https://thisyearthatday.vercel.app";
+  const siteUrl = SITE_URL;
   const jsonLd = [
     {
       "@context": "https://schema.org",
