@@ -103,8 +103,8 @@ export default function OnThisDayIndex() {
       <main
         style={{
           minHeight: "100vh",
-          background: "#050403",
-          color: "#fff",
+          background: "#0b0b0a",
+          color: "#f1ede4",
           padding: "0 clamp(16px, 5vw, 80px)",
         }}
       >
@@ -119,34 +119,19 @@ export default function OnThisDayIndex() {
               fontWeight: 600,
               letterSpacing: "0.3em",
               textTransform: "uppercase" as const,
-              color: "rgba(195, 155, 85, 0.6)",
+              color: "#f1ede4",
               textDecoration: "none",
             }}
           >
-            <span
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                background: "#c9a44e",
-                display: "inline-block",
-              }}
-            />
             This Day That Year
           </Link>
           <h1
             style={{
               fontSize: "clamp(36px, 8vw, 72px)",
-              fontWeight: 800,
-              lineHeight: 1.3,
+              fontWeight: 600,
+              lineHeight: 1.08,
               marginTop: "clamp(16px, 3vh, 32px)",
-              paddingBottom: "0.15em",
-              background: "linear-gradient(155deg, #fff 10%, rgba(220, 185, 110, 0.85) 90%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              WebkitBoxDecorationBreak: "clone" as const,
-              boxDecorationBreak: "clone" as const,
+              color: "#f1ede4",
             }}
           >
             On This Day in History
@@ -154,8 +139,7 @@ export default function OnThisDayIndex() {
           <p
             style={{
               fontSize: "clamp(14px, 2vw, 18px)",
-              color: "rgba(195, 155, 85, 0.5)",
-              fontStyle: "italic",
+              color: "#c5a56c",
               marginTop: "8px",
               maxWidth: "540px",
               marginLeft: "auto",
@@ -177,9 +161,9 @@ export default function OnThisDayIndex() {
                 style={{
                   fontSize: "clamp(20px, 3vw, 28px)",
                   fontWeight: 700,
-                  color: "rgb(195, 165, 100)",
+                  color: "#c5a56c",
                   marginBottom: "clamp(12px, 2vh, 20px)",
-                  borderBottom: "1px solid rgba(195, 155, 85, 0.1)",
+                  borderBottom: "1px solid #725d3c",
                   paddingBottom: "8px",
                 }}
               >
@@ -200,10 +184,10 @@ export default function OnThisDayIndex() {
                       display: "block",
                       padding: "10px 12px",
                       fontSize: "14px",
-                      color: "rgba(255, 255, 255, 0.7)",
+                      color: "#e1dbcf",
                       textDecoration: "none",
-                      borderRadius: "4px",
-                      border: "1px solid rgba(195, 155, 85, 0.08)",
+                      borderRadius: "0",
+                      border: "1px solid #3e3425",
                       transition: "all 0.2s ease",
                     }}
                   >
@@ -229,7 +213,7 @@ export default function OnThisDayIndex() {
             style={{
               fontSize: "14px",
               fontWeight: 600,
-              color: "rgba(195, 155, 85, 0.6)",
+              color: "#c5a56c",
               textDecoration: "none",
             }}
           >

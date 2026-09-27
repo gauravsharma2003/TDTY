@@ -1,66 +1,64 @@
 .shareWrap {
-  position: absolute;
-  bottom: clamp(28px, 5vh, 50px);
-  right: clamp(24px, 4vw, 48px);
-  z-index: 12;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.tooltip {
-  white-space: nowrap;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-  color: rgba(195, 155, 85, 0.85);
-  background: rgba(5, 4, 3, 0.85);
-  border: 1px solid rgba(195, 155, 85, 0.15);
-  border-radius: 6px;
-  padding: 6px 14px;
-  animation: tooltipIn 0.25s ease-out;
-  pointer-events: none;
-}
-
-@keyframes tooltipIn {
-  from {
-    opacity: 0;
-    transform: translateX(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  position: relative;
+  justify-self: end;
 }
 
 .shareBtn {
-  background: none;
-  border: 1px solid rgba(195, 155, 85, 0.12);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
+  min-width: 150px;
+  min-height: 44px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  border: 1px solid #f1ede4;
+  border-radius: 6px;
+  background: #f1ede4;
+  color: #171513;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
-  transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease;
-  flex-shrink: 0;
+  transition: background-color 180ms ease, transform 180ms ease;
 }
 
-.shareBtn:hover {
-  border-color: rgba(195, 155, 85, 0.3);
-  background: rgba(195, 155, 85, 0.06);
-}
-
-.shareBtn:active {
-  transform: scale(0.95);
-}
-
+.shareBtn:hover { background: #d8b979; }
+.shareBtn:active { transform: scale(0.97); }
 .shareBtn:focus-visible {
-  outline: 2px solid rgba(195, 155, 85, 0.6);
-  outline-offset: 2px;
+  outline: 2px solid #f1ede4;
+  outline-offset: 4px;
 }
 
-.shareBtn:disabled {
-  opacity: 0.4;
-  cursor: wait;
+.status {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  z-index: 20;
+  color: #f1ede4;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.status:empty { display: none; }
+
+@media (max-width: 760px) {
+  .shareBtn {
+    min-width: 0;
+    min-height: 42px;
+    padding: 0 12px;
+    gap: 7px;
+    font-size: 12px;
+  }
+  .shareBtn svg { width: 17px; height: 17px; }
+}
+
+@media (max-width: 420px) {
+  .shareBtn { padding-inline: 9px; }
+  .storyWord { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shareBtn { transition: none; }
 }

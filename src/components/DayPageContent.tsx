@@ -41,6 +41,7 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
 
   return (
     <article
+      id={`event-${event.year}`}
       ref={ref}
       className={styles.card}
       style={{
@@ -49,7 +50,7 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
         transition: `all 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${index * 0.15}s`,
       }}
     >
-      <div className={styles.cardImage}>
+      <figure className={styles.cardImage}>
         <img
           src={event.image_url}
           alt={`${event.title} — ${event.subtitle}`}
@@ -59,7 +60,8 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
           height={450}
         />
         <div className={styles.cardImageOverlay} />
-      </div>
+        {event.image_credit && <figcaption className={styles.cardCredit}>{event.image_credit}</figcaption>}
+      </figure>
 
       <div className={styles.cardBody}>
         <div className={styles.cardMeta}>
@@ -73,7 +75,9 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
 
         <h2 className={styles.cardTitle}>{event.title}</h2>
         <p className={styles.cardSubtitle}>{event.subtitle}</p>
-        <p className={styles.cardText}>{event.text}</p>
+        {event.text.trim() !== event.subtitle.trim() && (
+          <p className={styles.cardText}>{event.text}</p>
+        )}
 
         <div className={styles.cardYearLabel}>{formatYear(event.year)}</div>
       </div>
@@ -93,7 +97,6 @@ export default function DayPageContent({ events, displayDate, prevSlug, nextSlug
           <span aria-current="page">{displayDate}</span>
         </nav>
         <Link href="/" className={styles.homeLink}>
-          <span className={styles.dot} />
           This Day That Year
         </Link>
         <h1 className={styles.dateHeading}>{displayDate}</h1>

@@ -18,13 +18,20 @@ async function getTodayEvent() {
 
   const eventIndex = now.getFullYear() % (dayEvents.length || 1);
   const event = dayEvents[eventIndex] ?? dayEvents[0];
+  const otherEvents = dayEvents.filter((_, index) => index !== eventIndex);
+  const photographicEvents = otherEvents.filter((item) => /\.jpe?g(?:$|\?)/i.test(item.image_url));
+  const candidates = photographicEvents.length >= 3 ? photographicEvents : otherEvents;
+  const positions = [0, Math.floor((candidates.length - 1) / 3), candidates.length - 1];
+  const relatedEvents = [...new Set(positions)]
+    .map((index) => candidates[index])
+    .filter((item): item is HistoryEvent => Boolean(item));
   const monthLong = now.toLocaleDateString("en-US", { month: "long" });
   const monthShort = now.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
   const day = now.getDate();
   const dateString = `${monthLong} ${day}`;
 
   const todaySlug = dateKeyToSlug(dateKey);
-  return { event, monthShort, monthLong, day, dateString, todaySlug };
+  return { event, relatedEvents, monthShort, monthLong, day, dateString, todaySlug };
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,7 +39,10 @@ export async function generateMetadata(): Promise<Metadata> {
   if (!event) return {};
 
   const title = `Today in History: ${event.title} — This Day That Year`;
-  const description = `On ${dateString}, ${formatYear(event.year)}: ${event.subtitle}. ${event.text.slice(0, 140)}`;
+  const detail = event.subtitle.trim() === event.text.trim()
+    ? event.text
+    : `${event.subtitle} ${event.text}`;
+  const description = `On ${dateString}, ${formatYear(event.year)}: ${detail.slice(0, 180)}`;
   const siteName = SITE_NAME;
   const siteUrl = SITE_URL;
 
@@ -109,7 +119,9 @@ function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateStr
       "@context": "https://schema.org",
       "@type": "Article",
       headline: `Today in History: ${event.title}`,
-      description: `${event.subtitle}. ${event.text.slice(0, 200)}`,
+      description: event.subtitle.trim() === event.text.trim()
+        ? event.text.slice(0, 200)
+        : `${event.subtitle} ${event.text.slice(0, 200)}`,
       articleBody: event.text,
       image: event.image_url,
       author: {
@@ -173,27 +185,18 @@ function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateStr
 }
 
 export default async function Home() {
-  const { event, monthShort, day, dateString, todaySlug } = await getTodayEvent();
+  const { event, relatedEvents, monthShort, day, dateString, todaySlug } = await getTodayEvent();
   if (!event) return null;
   return (
     <>
       <JsonLd event={event} dateString={dateString} todaySlug={todaySlug} />
-      <h1
-        style={{
-          position: "absolute",
-          width: "1px",
-          height: "1px",
-          padding: 0,
-          margin: "-1px",
-          overflow: "hidden",
-          clip: "rect(0,0,0,0)",
-          whiteSpace: "nowrap",
-          border: 0,
-        }}
-      >
-        Today in History: {event.title} — {dateString}, {formatYear(event.year)}
-      </h1>
-      <TDTYApp event={event} monthShort={monthShort} day={day} todaySlug={todaySlug} />
+      <TDTYApp
+        event={event}
+        relatedEvents={relatedEvents}
+        monthShort={monthShort}
+        day={day}
+        todaySlug={todaySlug}
+      />
     </>
   );
 }
