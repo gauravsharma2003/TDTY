@@ -31,7 +31,7 @@ async function getTodayEvent() {
   const dateString = `${monthLong} ${day}`;
 
   const todaySlug = dateKeyToSlug(dateKey);
-  return { event, relatedEvents, monthShort, monthLong, day, dateString, todaySlug };
+  return { event, relatedEvents, monthShort, monthLong, day, dateString, todaySlug, dateKey, year: now.getFullYear() };
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -139,7 +139,7 @@ function JsonLd({ event }: { event: HistoryEvent }) {
 }
 
 export default async function Home() {
-  const { event, relatedEvents, monthShort, day, todaySlug } = await getTodayEvent();
+  const { event, relatedEvents, monthShort, day, todaySlug, dateKey, year } = await getTodayEvent();
   if (!event) return null;
   return (
     <>
@@ -150,6 +150,8 @@ export default async function Home() {
         monthShort={monthShort}
         day={day}
         todaySlug={todaySlug}
+        dateKey={dateKey}
+        year={year}
       />
     </>
   );
