@@ -191,6 +191,14 @@
   max-width: 640px;
 }
 
+.cardSources {
+  margin-top: 12px;
+  color: #a99b82;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .cardYearLabel {
   margin-top: 16px;
   font-size: 11px;

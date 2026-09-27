@@ -3,11 +3,6 @@ import Link from "next/link";
 import { getAllSlugs, slugToDisplayDate } from "@/lib/date-slugs";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
 export const metadata: Metadata = {
   title: "On This Day in History — Every Day of the Year | This Day That Year",
   description:
@@ -78,11 +73,11 @@ export default function OnThisDayIndex() {
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: 366,
-      itemListElement: MONTH_NAMES.map((m, i) => ({
+      itemListElement: allSlugs.map((slug, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        name: m,
-        url: `${SITE_URL}/on-this-day#${m.toLowerCase()}`,
+        name: slugToDisplayDate(slug),
+        item: `${SITE_URL}/on-this-day/${slug}`,
       })),
     },
     breadcrumb: {

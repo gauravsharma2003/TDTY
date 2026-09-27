@@ -53,9 +53,9 @@ export async function generateMetadata({
       title,
       description,
       url: `${siteUrl}/on-this-day/${slug}`,
-      siteName: "This Day That Year",
+    siteName: SITE_NAME,
       images: [{ url: events[0].image_url, alt: events[0].title, width: 1200, height: 630 }],
-      type: "article",
+      type: "website",
       locale: "en_US",
     },
     twitter: {
@@ -99,23 +99,25 @@ export default async function DayPage({
   const jsonLd = [
     {
       "@context": "https://schema.org",
-      "@type": "ItemList",
+      "@type": "CollectionPage",
+      "@id": `${siteUrl}/on-this-day/${slug}#page`,
+      url: `${siteUrl}/on-this-day/${slug}`,
       name: `Historical events on ${displayDate}`,
       description: `Major events that happened on ${displayDate} throughout history`,
-      numberOfItems: top3.length,
-      itemListElement: top3.map((e, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: {
-          "@type": "Article",
-          headline: e.title,
-          description: `${e.subtitle}. ${e.text}`,
-          image: e.image_url,
-          datePublished: formatYear(e.year),
-          author: { "@type": "Organization", name: SITE_NAME, url: siteUrl },
-          publisher: { "@type": "Organization", name: SITE_NAME, url: siteUrl },
-        },
-      })),
+      isPartOf: { "@id": `${siteUrl}#website` },
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: top3.length,
+        itemListElement: top3.map((event, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "Thing",
+            name: event.title,
+            description: event.subtitle,
+          },
+        })),
+      },
     },
     {
       "@context": "https://schema.org",

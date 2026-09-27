@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { HistoryEvent } from "@/lib/types";
 import { yearDisplay } from "@/lib/format-year";
 import ShareButton from "./ShareButton";
+import WikimediaCredit from "./WikimediaCredit";
 import styles from "./TDTYApp.module.css";
 
 interface Props {
@@ -58,7 +59,7 @@ export default function TDTYApp({ event, relatedEvents, monthShort, day, todaySl
       <section className={styles.feature} aria-labelledby="featured-title">
         <figure className={styles.featureImage}>
           <EventImage event={event} className={styles.heroImg} eager />
-          {event.image_credit && <figcaption className={styles.imageCredit}>{event.image_credit}</figcaption>}
+          <WikimediaCredit event={event} className={styles.imageCredit} />
         </figure>
         <div className={styles.featureContent}>
           <div className={styles.featureContentInner}>
@@ -69,6 +70,18 @@ export default function TDTYApp({ event, relatedEvents, monthShort, day, todaySl
             <Link className={styles.exploreLink} href={dayHref}>
               Explore this day <span aria-hidden="true">→</span>
             </Link>
+            {event.sources?.length ? (
+              <p className={styles.sources}>
+                Sources: {event.sources.map((source, index) => (
+                  <span key={source.url}>
+                    {index > 0 ? ", " : ""}
+                    <a href={source.url} target="_blank" rel="noopener noreferrer">
+                      {source.label}
+                    </a>
+                  </span>
+                ))}
+              </p>
+            ) : null}
           </div>
         </div>
       </section>
@@ -91,7 +104,7 @@ export default function TDTYApp({ event, relatedEvents, monthShort, day, todaySl
                   <h3>{related.title}</h3>
                   <figure className={styles.timelineImage}>
                     <EventImage event={related} className={styles.timelineImg} />
-                    {related.image_credit && <figcaption className={styles.timelineCredit}>{related.image_credit}</figcaption>}
+                    <WikimediaCredit event={related} className={styles.timelineCredit} />
                   </figure>
                 </div>
               </Link>

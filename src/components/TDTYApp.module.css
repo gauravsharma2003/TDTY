@@ -87,6 +87,20 @@
   text-shadow: 0 1px 4px #000;
 }
 
+.imageCredit a,
+.timelineCredit a,
+.sources a {
+  color: inherit;
+}
+
+.sources {
+  margin-top: 18px;
+  color: #a99b82;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .featureContent {
   min-width: 0;
   display: flex;

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { HistoryEvent } from "@/lib/types";
 import { formatYear, yearDisplay } from "@/lib/format-year";
+import WikimediaCredit from "@/components/WikimediaCredit";
 import styles from "./DayPageContent.module.css";
 
 interface Props {
@@ -60,7 +61,7 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
           height={450}
         />
         <div className={styles.cardImageOverlay} />
-        {event.image_credit && <figcaption className={styles.cardCredit}>{event.image_credit}</figcaption>}
+        <WikimediaCredit event={event} className={styles.cardCredit} />
       </figure>
 
       <div className={styles.cardBody}>
@@ -78,6 +79,18 @@ function EventCard({ event, index }: { event: HistoryEvent; index: number }) {
         {event.text.trim() !== event.subtitle.trim() && (
           <p className={styles.cardText}>{event.text}</p>
         )}
+        {event.sources?.length ? (
+          <p className={styles.cardSources}>
+            Sources: {event.sources.map((source, sourceIndex) => (
+              <span key={source.url}>
+                {sourceIndex > 0 ? ", " : ""}
+                <a href={source.url} target="_blank" rel="noreferrer">
+                  {source.label}
+                </a>
+              </span>
+            ))}
+          </p>
+        ) : null}
 
         <div className={styles.cardYearLabel}>{formatYear(event.year)}</div>
       </div>

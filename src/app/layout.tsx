@@ -44,6 +44,7 @@ export const viewport: Viewport = {
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${SITE_URL}#website`,
   name: "This Day That Year",
   alternateName: "TDTY",
   url: SITE_URL,

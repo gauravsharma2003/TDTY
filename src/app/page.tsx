@@ -112,70 +112,24 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateString: string; todaySlug: string }) {
-  const siteUrl = SITE_URL;
-  const jsonLd = [
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      headline: `Today in History: ${event.title}`,
-      description: event.subtitle.trim() === event.text.trim()
-        ? event.text.slice(0, 200)
-        : `${event.subtitle} ${event.text.slice(0, 200)}`,
-      articleBody: event.text,
-      image: event.image_url,
-      author: {
-        "@type": "Organization",
-        name: "This Day That Year",
-        url: siteUrl,
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "This Day That Year",
-        url: siteUrl,
-      },
-      mainEntityOfPage: {
-        "@type": "WebPage",
-        "@id": siteUrl,
-      },
-      about: {
-        "@type": "Event",
-        name: event.title,
-        description: event.subtitle,
-        location: {
-          "@type": "Place",
-          name: event.location,
-        },
-        startDate: formatYear(event.year),
-      },
-      keywords: `today in history, this day in history, ${dateString}, ${event.title}, ${event.location}`,
+function JsonLd({ event }: { event: HistoryEvent }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${SITE_URL}#homepage`,
+    url: SITE_URL,
+    name: `Today in History: ${event.title} — ${SITE_NAME}`,
+    description: event.subtitle.trim() === event.text.trim()
+      ? event.text.slice(0, 200)
+      : `${event.subtitle} ${event.text.slice(0, 200)}`,
+    inLanguage: "en",
+    isPartOf: { "@id": `${SITE_URL}#website` },
+    mainEntity: {
+      "@type": "Thing",
+      name: event.title,
+      description: event.subtitle,
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteUrl,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "On This Day",
-          item: `${siteUrl}/on-this-day`,
-        },
-        {
-          "@type": "ListItem",
-          position: 3,
-          name: dateString,
-          item: `${siteUrl}/on-this-day/${todaySlug}`,
-        },
-      ],
-    },
-  ];
-
+  };
   return (
     <script
       type="application/ld+json"
@@ -185,11 +139,11 @@ function JsonLd({ event, dateString, todaySlug }: { event: HistoryEvent; dateStr
 }
 
 export default async function Home() {
-  const { event, relatedEvents, monthShort, day, dateString, todaySlug } = await getTodayEvent();
+  const { event, relatedEvents, monthShort, day, todaySlug } = await getTodayEvent();
   if (!event) return null;
   return (
     <>
-      <JsonLd event={event} dateString={dateString} todaySlug={todaySlug} />
+      <JsonLd event={event} />
       <TDTYApp
         event={event}
         relatedEvents={relatedEvents}

@@ -10,6 +10,7 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "split-data": "node scripts/split-events.js",
+    "audit:content": "node scripts/audit-content.js",
     "start": "next start",
     "lint": "eslint"
   },

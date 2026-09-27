@@ -8,4 +8,5 @@ export interface HistoryEvent {
   image_url: string;
   image_filename: string;
   image_credit: string;
+  sources?: { label: string; url: string }[];
 }

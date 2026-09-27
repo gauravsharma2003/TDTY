@@ -33844,9 +33844,15 @@
       "subtitle": "A Japanese sovereign of the Heian golden age",
       "text": "The future Emperor Ninmyo was born during the flowering of the Heian period. He would reign from 833 to 850, presiding over a court renowned for poetry, calligraphy, and refined aesthetics. His rule fell within the golden age of Japanese imperial culture, when the court at Kyoto set cultural standards that would define Japanese civilization for centuries.",
       "location": "Kyoto, Japan",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Coin_of_Eardwulf_of_Northumbria.png",
-      "image_filename": "Coin_of_Eardwulf_of_Northumbria.png",
-      "image_credit": "Coin_of_Eardwulf_of_Northumbria.png - Wikimedia Commons"
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Emperor_Ninmyo.jpg/500px-Emperor_Ninmyo.jpg",
+      "image_filename": "Emperor_Ninmyo.jpg",
+      "image_credit": "Emperor Ninmyo.jpg - Wikimedia Commons",
+      "sources": [
+        {
+          "label": "Wikipedia: Emperor Ninmyō",
+          "url": "https://en.wikipedia.org/wiki/Emperor_Ninmy%C5%8D"
+        }
+      ]
     },
     {
       "year": 1903,
