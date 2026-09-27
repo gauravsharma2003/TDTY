@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import type { HistoryEvent } from "@/lib/types";
 import { yearDisplay } from "@/lib/format-year";
@@ -14,8 +14,6 @@ interface Props {
   monthShort: string;
   day: number;
   todaySlug: string;
-  dateKey: string;
-  year: number;
 }
 
 function EventImage({ event, className, eager = false }: {
@@ -40,60 +38,10 @@ function EventImage({ event, className, eager = false }: {
   );
 }
 
-export default function TDTYApp({ event, relatedEvents, monthShort, day, todaySlug, dateKey, year }: Props) {
-  const [today, setToday] = useState({ event, relatedEvents, monthShort, day, todaySlug });
-
-  useEffect(() => {
-    let active = true;
-    let midnightTimer: ReturnType<typeof setTimeout>;
-    let loadedDate = `${year}-${dateKey}`;
-
-    const updateForLocalDate = async () => {
-      const now = new Date();
-      const localDateKey = `${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-      const requestedDate = `${now.getFullYear()}-${localDateKey}`;
-
-      // Revalidate at local midnight, and on return to a backgrounded tab.
-      const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-      midnightTimer = setTimeout(() => { void updateForLocalDate(); }, Math.max(1000, nextMidnight - now.getTime() + 100));
-
-      if (requestedDate === loadedDate) return;
-      try {
-        const response = await fetch(`/api/today?date=${localDateKey}&year=${now.getFullYear()}`, { cache: "no-store" });
-        if (!response.ok) return;
-        const result = await response.json();
-        if (active) {
-          setToday(result);
-          loadedDate = requestedDate;
-        }
-      } catch {
-        // Keep the server-rendered story if the local-date lookup is unavailable.
-      }
-    };
-
-    const refresh = () => {
-      clearTimeout(midnightTimer);
-      void updateForLocalDate();
-    };
-    refresh();
-    window.addEventListener("focus", refresh);
-    document.addEventListener("visibilitychange", refresh);
-
-    return () => {
-      active = false;
-      clearTimeout(midnightTimer);
-      window.removeEventListener("focus", refresh);
-      document.removeEventListener("visibilitychange", refresh);
-    };
-  }, [dateKey, year]);
-
-  useEffect(() => {
-    document.title = `Today in History: ${today.event.title} — This Day That Year`;
-  }, [today.event.title]);
-
-  const dateLabel = `${today.monthShort} ${today.day}`;
-  const summary = today.event.subtitle?.trim() || today.event.text?.trim();
-  const dayHref = `/on-this-day/${today.todaySlug}`;
+export default function TDTYApp({ event, relatedEvents, monthShort, day, todaySlug }: Props) {
+  const dateLabel = `${monthShort} ${day}`;
+  const summary = event.subtitle?.trim() || event.text?.trim();
+  const dayHref = `/on-this-day/${todaySlug}`;
 
   return (
     <main className={styles.page}>
@@ -105,26 +53,26 @@ export default function TDTYApp({ event, relatedEvents, monthShort, day, todaySl
           <Link href="/" aria-current="page">Today</Link>
           <Link href="/on-this-day">Browse dates</Link>
         </nav>
-        <ShareButton event={today.event} monthShort={today.monthShort} day={today.day} />
+        <ShareButton event={event} monthShort={monthShort} day={day} />
       </header>
 
       <section className={styles.feature} aria-labelledby="featured-title">
         <figure className={styles.featureImage}>
-          <EventImage event={today.event} className={styles.heroImg} eager />
-          <WikimediaCredit event={today.event} className={styles.imageCredit} />
+          <EventImage event={event} className={styles.heroImg} eager />
+          <WikimediaCredit event={event} className={styles.imageCredit} />
         </figure>
         <div className={styles.featureContent}>
           <div className={styles.featureContentInner}>
             <p className={styles.date}>{dateLabel}</p>
-            <span className={styles.year}>{yearDisplay(today.event.year)}</span>
-            <h1 id="featured-title" className={styles.title}>{today.event.title}</h1>
+            <span className={styles.year}>{yearDisplay(event.year)}</span>
+            <h1 id="featured-title" className={styles.title}>{event.title}</h1>
             {summary && <p className={styles.summary}>{summary}</p>}
             <Link className={styles.exploreLink} href={dayHref}>
               Explore this day <span aria-hidden="true">→</span>
             </Link>
-            {today.event.sources?.length ? (
+            {event.sources?.length ? (
               <p className={styles.sources}>
-                Sources: {today.event.sources.map((source, index) => (
+                Sources: {event.sources.map((source, index) => (
                   <span key={source.url}>
                     {index > 0 ? ", " : ""}
                     <a href={source.url} target="_blank" rel="noopener noreferrer">
@@ -138,14 +86,14 @@ export default function TDTYApp({ event, relatedEvents, monthShort, day, todaySl
         </div>
       </section>
 
-      {today.relatedEvents.length > 0 && (
+      {relatedEvents.length > 0 && (
         <section className={styles.timeline} aria-labelledby="timeline-title">
           <div className={styles.timelineHeading}>
             <h2 id="timeline-title">Other moments on {dateLabel}</h2>
             <span aria-hidden="true" />
           </div>
           <div className={styles.timelineList}>
-            {today.relatedEvents.map((related) => (
+            {relatedEvents.map((related) => (
               <Link
                 className={styles.timelineItem}
                 href={`${dayHref}#event-${related.year}`}

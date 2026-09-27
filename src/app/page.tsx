@@ -1,22 +1,43 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import TDTYApp from "@/components/TDTYApp";
 import type { HistoryEvent } from "@/lib/types";
 import { formatYear } from "@/lib/format-year";
 import { dateKeyToSlug } from "@/lib/date-slugs";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { getEventsForDate } from "@/lib/events-data";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-export const revalidate = 3600;
+// The homepage is visitor-timezone-specific, so it must be rendered per request
+// instead of being shared from the ISR/Worker response cache.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-async function getTodayEvent() {
+const getTodayEvent = cache(async () => {
+  let timeZone = "UTC";
+  try {
+    const { cf } = await getCloudflareContext({ async: true });
+    if (typeof cf?.timezone === "string" && cf.timezone) timeZone = cf.timezone;
+  } catch {
+    // Local development or non-Cloudflare hosting falls back to UTC.
+  }
+
   const now = new Date();
-  const mm = String(now.getMonth() + 1).padStart(2, "0");
-  const dd = String(now.getDate()).padStart(2, "0");
+  const dateParts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const datePart = (type: string) => dateParts.find((part) => part.type === type)?.value ?? "0";
+  const year = Number(datePart("year"));
+  const mm = datePart("month");
+  const dd = datePart("day");
   const dateKey = `${mm}-${dd}`;
 
   const dayEvents = await getEventsForDate(dateKey);
 
-  const eventIndex = now.getFullYear() % (dayEvents.length || 1);
+  const eventIndex = year % (dayEvents.length || 1);
   const event = dayEvents[eventIndex] ?? dayEvents[0];
   const otherEvents = dayEvents.filter((_, index) => index !== eventIndex);
   const photographicEvents = otherEvents.filter((item) => /\.jpe?g(?:$|\?)/i.test(item.image_url));
@@ -25,14 +46,14 @@ async function getTodayEvent() {
   const relatedEvents = [...new Set(positions)]
     .map((index) => candidates[index])
     .filter((item): item is HistoryEvent => Boolean(item));
-  const monthLong = now.toLocaleDateString("en-US", { month: "long" });
-  const monthShort = now.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
-  const day = now.getDate();
+  const monthLong = new Intl.DateTimeFormat("en-US", { timeZone, month: "long" }).format(now);
+  const monthShort = new Intl.DateTimeFormat("en-US", { timeZone, month: "short" }).format(now).toUpperCase();
+  const day = Number(dd);
   const dateString = `${monthLong} ${day}`;
 
   const todaySlug = dateKeyToSlug(dateKey);
-  return { event, relatedEvents, monthShort, monthLong, day, dateString, todaySlug, dateKey, year: now.getFullYear() };
-}
+  return { event, relatedEvents, monthShort, monthLong, day, dateString, todaySlug };
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const { event, dateString } = await getTodayEvent();
@@ -139,7 +160,7 @@ function JsonLd({ event }: { event: HistoryEvent }) {
 }
 
 export default async function Home() {
-  const { event, relatedEvents, monthShort, day, todaySlug, dateKey, year } = await getTodayEvent();
+  const { event, relatedEvents, monthShort, day, todaySlug } = await getTodayEvent();
   if (!event) return null;
   return (
     <>
@@ -150,8 +171,6 @@ export default async function Home() {
         monthShort={monthShort}
         day={day}
         todaySlug={todaySlug}
-        dateKey={dateKey}
-        year={year}
       />
     </>
   );

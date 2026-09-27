@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0, must-revalidate" },
+        ],
+      },
+      {
         source: "/on-this-day/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=86400, s-maxage=604800" },
